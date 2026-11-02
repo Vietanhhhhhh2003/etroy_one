@@ -1,0 +1,1243 @@
+[
+  {
+    "id": "tc-01",
+    "name": "01 Create User",
+    "method": "POST",
+    "path": "/register",
+    "description": "Expected: Create user returns 200/201 and safe user fields.",
+    "body": {
+      "email": "{{userEmail}}",
+      "password": "{{userPassword}}",
+      "name": "API Explorer User"
+    },
+    "group": "Identity & Login"
+  },
+  {
+    "id": "tc-02",
+    "name": "02 Duplicate Email Rejected",
+    "method": "POST",
+    "path": "/register",
+    "description": "Expected: Duplicate email returns controlled 400/409 without internals.",
+    "body": {
+      "email": "{{userEmail}}",
+      "password": "{{userPassword}}",
+      "name": "Duplicate User"
+    },
+    "group": "Identity & Login"
+  },
+  {
+    "id": "tc-03",
+    "name": "03 Valid Login",
+    "method": "POST",
+    "path": "/login",
+    "description": "Expected: Valid credentials return sanitized identity only.",
+    "body": {
+      "email": "{{userEmail}}",
+      "password": "{{userPassword}}"
+    },
+    "group": "Identity & Login"
+  },
+  {
+    "id": "tc-04",
+    "name": "04 Wrong Password",
+    "method": "POST",
+    "path": "/login",
+    "description": "Expected: Wrong password returns generic 401 credential error.",
+    "body": {
+      "email": "{{userEmail}}",
+      "password": "{{wrongPassword}}"
+    },
+    "group": "Identity & Login"
+  },
+  {
+    "id": "tc-05",
+    "name": "05 Unknown Email",
+    "method": "POST",
+    "path": "/login",
+    "description": "Expected: Unknown email returns generic 401 credential error.",
+    "body": {
+      "email": "{{unknownEmail}}",
+      "password": "{{userPassword}}"
+    },
+    "group": "Identity & Login"
+  },
+  {
+    "id": "tc-06",
+    "name": "06 Invalid Login Input",
+    "method": "POST",
+    "path": "/login",
+    "description": "Expected: Invalid login input returns controlled 400 validation error.",
+    "body": {
+      "email": "not-an-email",
+      "password": ""
+    },
+    "group": "Identity & Login"
+  },
+  {
+    "id": "tc-07",
+    "name": "07 Request Email Verification",
+    "method": "POST",
+    "path": "/verification/request",
+    "description": "Expected: Request is accepted without exposing raw token or hash.",
+    "body": {
+      "userId": "{{subject}}"
+    },
+    "group": "Verification & Reset"
+  },
+  {
+    "id": "tc-08",
+    "name": "08 Confirm Email Verification",
+    "method": "POST",
+    "path": "/verification/confirm",
+    "description": "Expected: Valid token confirms verification without exposing token data.",
+    "body": {
+      "token": "{{verificationToken}}"
+    },
+    "group": "Verification & Reset"
+  },
+  {
+    "id": "tc-09",
+    "name": "09 Reuse Verification Token",
+    "method": "POST",
+    "path": "/verification/confirm",
+    "description": "Expected: Reused verification token is rejected with controlled error.",
+    "body": {
+      "token": "{{verificationToken}}"
+    },
+    "group": "Verification & Reset"
+  },
+  {
+    "id": "tc-10",
+    "name": "10 Expired Verification Token",
+    "method": "POST",
+    "path": "/verification/confirm",
+    "description": "Expected: Expired verification token is rejected with controlled error.",
+    "body": {
+      "token": "{{expiredVerificationToken}}"
+    },
+    "group": "Verification & Reset"
+  },
+  {
+    "id": "tc-11",
+    "name": "11 Request Password Reset",
+    "method": "POST",
+    "path": "/password-reset/request",
+    "description": "Expected: Password reset request is accepted without exposing token data.",
+    "body": {
+      "email": "{{userEmail}}"
+    },
+    "group": "Verification & Reset"
+  },
+  {
+    "id": "tc-12",
+    "name": "12 Password Reset Unknown Email",
+    "method": "POST",
+    "path": "/password-reset/request",
+    "description": "Expected: Unknown email behavior is non-revealing.",
+    "body": {
+      "email": "{{unknownEmail}}"
+    },
+    "group": "Verification & Reset"
+  },
+  {
+    "id": "tc-13",
+    "name": "13 Confirm Password Reset",
+    "method": "POST",
+    "path": "/password-reset/confirm",
+    "description": "Expected: Valid reset token updates password without exposing token data.",
+    "body": {
+      "token": "{{passwordResetToken}}",
+      "newPassword": "{{newPassword}}"
+    },
+    "group": "Verification & Reset"
+  },
+  {
+    "id": "tc-14",
+    "name": "14 Login With New Password",
+    "method": "POST",
+    "path": "/login",
+    "description": "Expected: Login succeeds with the new password after reset.",
+    "body": {
+      "email": "{{userEmail}}",
+      "password": "{{newPassword}}"
+    },
+    "group": "Verification & Reset"
+  },
+  {
+    "id": "tc-15",
+    "name": "15 Reuse Password Reset Token",
+    "method": "POST",
+    "path": "/password-reset/confirm",
+    "description": "Expected: Reused reset token is rejected.",
+    "body": {
+      "token": "{{passwordResetToken}}",
+      "newPassword": "{{newPassword}}"
+    },
+    "group": "Verification & Reset"
+  },
+  {
+    "id": "tc-16",
+    "name": "16 Expired Password Reset Token",
+    "method": "POST",
+    "path": "/password-reset/confirm",
+    "description": "Expected: Expired reset token is rejected.",
+    "body": {
+      "token": "{{expiredPasswordResetToken}}",
+      "newPassword": "{{newPassword}}"
+    },
+    "group": "Verification & Reset"
+  },
+  {
+    "id": "tc-17",
+    "name": "17 Valid Authorization Request",
+    "method": "GET",
+    "path": "/authorize",
+    "description": "Expected: Valid OIDC authorization request passes validation.",
+    "query": {
+      "response_type": "code",
+      "client_id": "{{clientId}}",
+      "redirect_uri": "{{redirectUri}}",
+      "scope": "openid profile email offline_access",
+      "state": "{{state}}",
+      "nonce": "{{nonce}}",
+      "code_challenge": "{{codeChallenge}}",
+      "code_challenge_method": "S256"
+    },
+    "group": "Authorization & Tokens"
+  },
+  {
+    "id": "tc-18",
+    "name": "18 Missing Response Type",
+    "method": "GET",
+    "path": "/authorize",
+    "description": "Expected: Missing response_type returns controlled error.",
+    "query": {
+      "client_id": "{{clientId}}",
+      "redirect_uri": "{{redirectUri}}",
+      "scope": "openid profile email offline_access",
+      "state": "{{state}}",
+      "nonce": "{{nonce}}",
+      "code_challenge": "{{codeChallenge}}",
+      "code_challenge_method": "S256"
+    },
+    "group": "Authorization & Tokens"
+  },
+  {
+    "id": "tc-19",
+    "name": "19 Invalid Response Type",
+    "method": "GET",
+    "path": "/authorize",
+    "description": "Expected: Unsupported response type is rejected.",
+    "query": {
+      "response_type": "token",
+      "client_id": "{{clientId}}",
+      "redirect_uri": "{{redirectUri}}",
+      "scope": "openid profile email offline_access",
+      "state": "{{state}}",
+      "nonce": "{{nonce}}",
+      "code_challenge": "{{codeChallenge}}",
+      "code_challenge_method": "S256"
+    },
+    "group": "Authorization & Tokens"
+  },
+  {
+    "id": "tc-20",
+    "name": "20 Invalid Client ID",
+    "method": "GET",
+    "path": "/authorize",
+    "description": "Expected: Unknown or invalid client is rejected.",
+    "query": {
+      "response_type": "code",
+      "client_id": "{{invalidClientId}}",
+      "redirect_uri": "{{redirectUri}}",
+      "scope": "openid profile email offline_access",
+      "state": "{{state}}",
+      "nonce": "{{nonce}}",
+      "code_challenge": "{{codeChallenge}}",
+      "code_challenge_method": "S256"
+    },
+    "group": "Authorization & Tokens"
+  },
+  {
+    "id": "tc-21",
+    "name": "21 Invalid Redirect URI",
+    "method": "GET",
+    "path": "/authorize",
+    "description": "Expected: Unregistered redirect URI is rejected.",
+    "query": {
+      "response_type": "code",
+      "client_id": "{{clientId}}",
+      "redirect_uri": "{{invalidRedirectUri}}",
+      "scope": "openid profile email offline_access",
+      "state": "{{state}}",
+      "nonce": "{{nonce}}",
+      "code_challenge": "{{codeChallenge}}",
+      "code_challenge_method": "S256"
+    },
+    "group": "Authorization & Tokens"
+  },
+  {
+    "id": "tc-22",
+    "name": "22 Missing PKCE Challenge",
+    "method": "GET",
+    "path": "/authorize",
+    "description": "Expected: Missing code_challenge is rejected.",
+    "query": {
+      "response_type": "code",
+      "client_id": "{{clientId}}",
+      "redirect_uri": "{{redirectUri}}",
+      "scope": "openid profile email offline_access",
+      "state": "{{state}}",
+      "nonce": "{{nonce}}",
+      "code_challenge_method": "S256"
+    },
+    "group": "Authorization & Tokens"
+  },
+  {
+    "id": "tc-23",
+    "name": "23 Invalid PKCE Method",
+    "method": "GET",
+    "path": "/authorize",
+    "description": "Expected: Non-S256 PKCE method is rejected.",
+    "query": {
+      "response_type": "code",
+      "client_id": "{{clientId}}",
+      "redirect_uri": "{{redirectUri}}",
+      "scope": "openid profile email offline_access",
+      "state": "{{state}}",
+      "nonce": "{{nonce}}",
+      "code_challenge": "{{codeChallenge}}",
+      "code_challenge_method": "plain"
+    },
+    "group": "Authorization & Tokens"
+  },
+  {
+    "id": "tc-24",
+    "name": "24 Continue Authorization",
+    "method": "POST",
+    "path": "/authorize/decision",
+    "description": "Expected: Valid continuation issues authorization code or redirect result.",
+    "body": {
+      "interaction_id": "{{interactionId}}",
+      "decision": "approve"
+    },
+    "group": "Authorization & Tokens"
+  },
+  {
+    "id": "tc-25",
+    "name": "25 Continue Auth Wrong Password",
+    "method": "POST",
+    "path": "/authorize/decision",
+    "description": "Expected: Invalid continuation credentials are rejected without leaking details.",
+    "body": {
+      "interaction_id": "{{interactionId}}",
+      "decision": "deny"
+    },
+    "group": "Authorization & Tokens"
+  },
+  {
+    "id": "tc-26",
+    "name": "26 Token Exchange",
+    "method": "POST",
+    "path": "/token",
+    "description": "Expected: Valid authorization code exchange returns token response.",
+    "contentType": "form",
+    "body": {
+      "grant_type": "authorization_code",
+      "code": "{{authorizationCode}}",
+      "redirect_uri": "{{redirectUri}}",
+      "client_id": "{{clientId}}",
+      "code_verifier": "{{codeVerifier}}"
+    },
+    "group": "Authorization & Tokens"
+  },
+  {
+    "id": "tc-27",
+    "name": "27 Invalid Token Exchange",
+    "method": "POST",
+    "path": "/token",
+    "description": "Expected: Invalid, missing, reused, expired code or PKCE mismatch is rejected.",
+    "contentType": "form",
+    "body": {
+      "grant_type": "authorization_code",
+      "code": "{{invalidAuthorizationCode}}",
+      "redirect_uri": "{{redirectUri}}",
+      "client_id": "{{clientId}}",
+      "code_verifier": "{{codeVerifier}}"
+    },
+    "group": "Authorization & Tokens"
+  },
+  {
+    "id": "tc-28",
+    "name": "28 JWT Access Token",
+    "method": "POST",
+    "path": "/token",
+    "description": "Expected: Token response includes JWT access token.",
+    "contentType": "form",
+    "body": {
+      "grant_type": "authorization_code",
+      "code": "{{authorizationCode}}",
+      "redirect_uri": "{{redirectUri}}",
+      "client_id": "{{clientId}}",
+      "code_verifier": "{{codeVerifier}}"
+    },
+    "group": "Authorization & Tokens"
+  },
+  {
+    "id": "tc-29",
+    "name": "29 ID Token",
+    "method": "POST",
+    "path": "/token",
+    "description": "Expected: Token response includes signed ID Token.",
+    "contentType": "form",
+    "body": {
+      "grant_type": "authorization_code",
+      "code": "{{authorizationCode}}",
+      "redirect_uri": "{{redirectUri}}",
+      "client_id": "{{clientId}}",
+      "code_verifier": "{{codeVerifier}}"
+    },
+    "group": "Authorization & Tokens"
+  },
+  {
+    "id": "tc-30",
+    "name": "30 UserInfo Valid Token",
+    "method": "GET",
+    "path": "/userinfo",
+    "description": "Expected: Valid access token returns allowed claims.",
+    "auth": true,
+    "group": "Authorization & Tokens"
+  },
+  {
+    "id": "tc-31",
+    "name": "31 UserInfo Invalid JWT",
+    "method": "GET",
+    "path": "/userinfo",
+    "description": "Expected: Invalid JWT is rejected.",
+    "headers": {
+      "Authorization": "Bearer {{invalidJwt}}"
+    },
+    "group": "Authorization & Tokens"
+  },
+  {
+    "id": "tc-32",
+    "name": "32 UserInfo No Authorization",
+    "method": "GET",
+    "path": "/userinfo",
+    "description": "Expected: Missing authorization header is rejected.",
+    "group": "Authorization & Tokens"
+  },
+  {
+    "id": "tc-33",
+    "name": "33 Refresh Token Issued",
+    "method": "POST",
+    "path": "/token",
+    "description": "Expected: Authorization-code exchange returns refresh token when expected.",
+    "contentType": "form",
+    "body": {
+      "grant_type": "authorization_code",
+      "code": "{{authorizationCode}}",
+      "redirect_uri": "{{redirectUri}}",
+      "client_id": "{{clientId}}",
+      "code_verifier": "{{codeVerifier}}"
+    },
+    "group": "Authorization & Tokens"
+  },
+  {
+    "id": "tc-34",
+    "name": "34 Refresh Token Grant",
+    "method": "POST",
+    "path": "/token",
+    "description": "Expected: Valid refresh token returns a new access token.",
+    "contentType": "form",
+    "body": {
+      "grant_type": "refresh_token",
+      "refresh_token": "{{refreshToken}}",
+      "client_id": "{{clientId}}"
+    },
+    "group": "Authorization & Tokens"
+  },
+  {
+    "id": "tc-35",
+    "name": "35 Missing Refresh Token",
+    "method": "POST",
+    "path": "/token",
+    "description": "Expected: Missing refresh token is rejected.",
+    "contentType": "form",
+    "body": {
+      "grant_type": "refresh_token",
+      "client_id": "{{clientId}}"
+    },
+    "group": "Authorization & Tokens"
+  },
+  {
+    "id": "tc-36",
+    "name": "36 Invalid Refresh Token",
+    "method": "POST",
+    "path": "/token",
+    "description": "Expected: Invalid refresh token is rejected without exposing internals.",
+    "contentType": "form",
+    "body": {
+      "grant_type": "refresh_token",
+      "refresh_token": "{{invalidRefreshToken}}",
+      "client_id": "{{clientId}}"
+    },
+    "group": "Authorization & Tokens"
+  },
+  {
+    "id": "tc-37",
+    "name": "37 Client Mismatch Refresh",
+    "method": "POST",
+    "path": "/token",
+    "description": "Expected: Refresh token bound to another client is rejected.",
+    "contentType": "form",
+    "body": {
+      "grant_type": "refresh_token",
+      "refresh_token": "{{refreshToken}}",
+      "client_id": "{{otherClientId}}"
+    },
+    "group": "Authorization & Tokens"
+  },
+  {
+    "id": "tc-38",
+    "name": "38 Refresh Token Rotation",
+    "method": "POST",
+    "path": "/token",
+    "description": "Expected: Refresh succeeds and rotates refresh token.",
+    "contentType": "form",
+    "body": {
+      "grant_type": "refresh_token",
+      "refresh_token": "{{refreshToken}}",
+      "client_id": "{{clientId}}"
+    },
+    "group": "Authorization & Tokens"
+  },
+  {
+    "id": "tc-39",
+    "name": "39 Old Refresh Token Reuse",
+    "method": "POST",
+    "path": "/token",
+    "description": "Expected: Reuse of old refresh token is rejected.",
+    "contentType": "form",
+    "body": {
+      "grant_type": "refresh_token",
+      "refresh_token": "{{refreshToken}}",
+      "client_id": "{{clientId}}"
+    },
+    "group": "Authorization & Tokens"
+  },
+  {
+    "id": "tc-40",
+    "name": "40 Compromised Token Family",
+    "method": "POST",
+    "path": "/token",
+    "description": "Expected: Reuse detection blocks compromised token family.",
+    "contentType": "form",
+    "body": {
+      "grant_type": "refresh_token",
+      "refresh_token": "{{refreshToken}}",
+      "client_id": "{{clientId}}"
+    },
+    "group": "Authorization & Tokens"
+  },
+  {
+    "id": "tc-41",
+    "name": "41 Concurrent Refresh Check",
+    "method": "POST",
+    "path": "/token",
+    "description": "Expected: Concurrent refresh behavior is controlled.",
+    "contentType": "form",
+    "body": {
+      "grant_type": "refresh_token",
+      "refresh_token": "{{refreshToken}}",
+      "client_id": "{{clientId}}"
+    },
+    "group": "Authorization & Tokens"
+  },
+  {
+    "id": "tc-42",
+    "name": "42 Introspect Active Token",
+    "method": "POST",
+    "path": "/introspect",
+    "description": "Expected: Active refresh token returns active status.",
+    "contentType": "form",
+    "body": {
+      "token": "{{refreshToken}}",
+      "token_type_hint": "refresh_token",
+      "client_id": "{{clientId}}"
+    },
+    "group": "Token Lifecycle"
+  },
+  {
+    "id": "tc-43",
+    "name": "43 Revoke Refresh Token",
+    "method": "POST",
+    "path": "/revoke",
+    "description": "Expected: Refresh token is revoked successfully.",
+    "contentType": "form",
+    "body": {
+      "token": "{{refreshToken}}",
+      "token_type_hint": "refresh_token",
+      "client_id": "{{clientId}}"
+    },
+    "group": "Token Lifecycle"
+  },
+  {
+    "id": "tc-44",
+    "name": "44 Revoked Refresh Reuse",
+    "method": "POST",
+    "path": "/token",
+    "description": "Expected: Revoked refresh token cannot be used.",
+    "contentType": "form",
+    "body": {
+      "grant_type": "refresh_token",
+      "refresh_token": "{{refreshToken}}",
+      "client_id": "{{clientId}}"
+    },
+    "group": "Token Lifecycle"
+  },
+  {
+    "id": "tc-45",
+    "name": "45 Introspect Revoked Token",
+    "method": "POST",
+    "path": "/introspect",
+    "description": "Expected: Revoked token returns inactive.",
+    "contentType": "form",
+    "body": {
+      "token": "{{refreshToken}}",
+      "token_type_hint": "refresh_token",
+      "client_id": "{{clientId}}"
+    },
+    "group": "Token Lifecycle"
+  },
+  {
+    "id": "tc-46",
+    "name": "46 Introspect Invalid Token",
+    "method": "POST",
+    "path": "/introspect",
+    "description": "Expected: Invalid token returns inactive without revealing internals.",
+    "contentType": "form",
+    "body": {
+      "token": "{{invalidRefreshToken}}",
+      "token_type_hint": "refresh_token",
+      "client_id": "{{clientId}}"
+    },
+    "group": "Token Lifecycle"
+  },
+  {
+    "id": "tc-47",
+    "name": "47 Revoke Unknown Token",
+    "method": "POST",
+    "path": "/revoke",
+    "description": "Expected: Unknown token revoke is non-revealing or idempotent.",
+    "contentType": "form",
+    "body": {
+      "token": "{{invalidRefreshToken}}",
+      "token_type_hint": "refresh_token",
+      "client_id": "{{clientId}}"
+    },
+    "group": "Token Lifecycle"
+  },
+  {
+    "id": "tc-48",
+    "name": "48 Start Auth Session",
+    "method": "GET",
+    "path": "/authorize",
+    "description": "Expected: Authorization flow can start and prepare session behavior.",
+    "query": {
+      "response_type": "code",
+      "client_id": "{{clientId}}",
+      "redirect_uri": "{{redirectUri}}",
+      "scope": "openid profile email offline_access",
+      "state": "{{state}}",
+      "nonce": "{{nonce}}",
+      "code_challenge": "{{codeChallenge}}",
+      "code_challenge_method": "S256"
+    },
+    "group": "Sessions & Logout"
+  },
+  {
+    "id": "tc-49",
+    "name": "49 Create Session",
+    "method": "POST",
+    "path": "/login",
+    "description": "Expected: Valid continuation creates session cookie.",
+    "body": {
+      "email": "{{userEmail}}",
+      "password": "{{userPassword}}"
+    },
+    "group": "Sessions & Logout"
+  },
+  {
+    "id": "tc-50",
+    "name": "50 SSO Reuse",
+    "method": "GET",
+    "path": "/authorize",
+    "description": "Expected: Active session allows SSO reuse.",
+    "query": {
+      "response_type": "code",
+      "client_id": "{{clientId}}",
+      "redirect_uri": "{{redirectUri}}",
+      "scope": "openid profile email offline_access",
+      "state": "{{state}}",
+      "nonce": "{{nonce}}",
+      "code_challenge": "{{codeChallenge}}",
+      "code_challenge_method": "S256"
+    },
+    "group": "Sessions & Logout"
+  },
+  {
+    "id": "tc-51",
+    "name": "51 SSO Invalid Client Guard",
+    "method": "GET",
+    "path": "/authorize",
+    "description": "Expected: SSO does not bypass invalid client validation.",
+    "query": {
+      "response_type": "code",
+      "client_id": "{{invalidClientId}}",
+      "redirect_uri": "{{redirectUri}}",
+      "scope": "openid profile email offline_access",
+      "state": "{{state}}",
+      "nonce": "{{nonce}}",
+      "code_challenge": "{{codeChallenge}}",
+      "code_challenge_method": "S256"
+    },
+    "group": "Sessions & Logout"
+  },
+  {
+    "id": "tc-52",
+    "name": "52 SSO Invalid Redirect Guard",
+    "method": "GET",
+    "path": "/authorize",
+    "description": "Expected: SSO does not bypass redirect URI validation.",
+    "query": {
+      "response_type": "code",
+      "client_id": "{{clientId}}",
+      "redirect_uri": "{{invalidRedirectUri}}",
+      "scope": "openid profile email offline_access",
+      "state": "{{state}}",
+      "nonce": "{{nonce}}",
+      "code_challenge": "{{codeChallenge}}",
+      "code_challenge_method": "S256"
+    },
+    "group": "Sessions & Logout"
+  },
+  {
+    "id": "tc-53",
+    "name": "53 Missing Session Path",
+    "method": "GET",
+    "path": "/authorize",
+    "description": "Expected: Missing session requires normal authentication path.",
+    "query": {
+      "response_type": "code",
+      "client_id": "{{clientId}}",
+      "redirect_uri": "{{redirectUri}}",
+      "scope": "openid profile email offline_access",
+      "state": "{{state}}",
+      "nonce": "{{nonce}}",
+      "code_challenge": "{{codeChallenge}}",
+      "code_challenge_method": "S256"
+    },
+    "group": "Sessions & Logout"
+  },
+  {
+    "id": "tc-54",
+    "name": "54 Logout Active Session",
+    "method": "POST",
+    "path": "/logout",
+    "description": "Expected: Logout invalidates active session.",
+    "headers": {
+      "x-oidc-csrf-token": "{{csrfToken}}"
+    },
+    "body": {
+      "csrf_token": "{{csrfToken}}"
+    },
+    "group": "Sessions & Logout"
+  },
+  {
+    "id": "tc-55",
+    "name": "55 Idempotent Logout",
+    "method": "POST",
+    "path": "/logout",
+    "description": "Expected: Repeated logout is safe and idempotent.",
+    "body": {},
+    "group": "Sessions & Logout"
+  },
+  {
+    "id": "tc-56",
+    "name": "56 Logout Blocks SSO Reuse",
+    "method": "GET",
+    "path": "/authorize",
+    "description": "Expected: Logged-out session cannot be reused for SSO.",
+    "query": {
+      "response_type": "code",
+      "client_id": "{{clientId}}",
+      "redirect_uri": "{{redirectUri}}",
+      "scope": "openid profile email offline_access",
+      "state": "{{state}}",
+      "nonce": "{{nonce}}",
+      "code_challenge": "{{codeChallenge}}",
+      "code_challenge_method": "S256"
+    },
+    "group": "Sessions & Logout"
+  },
+  {
+    "id": "tc-57",
+    "name": "57 Logout Without Cookie",
+    "method": "POST",
+    "path": "/logout",
+    "description": "Expected: Missing session cookie is handled safely.",
+    "body": {},
+    "group": "Sessions & Logout"
+  },
+  {
+    "id": "tc-58",
+    "name": "58 Logout Invalid CSRF",
+    "method": "POST",
+    "path": "/logout",
+    "description": "Expected: Invalid CSRF is rejected when CSRF is required.",
+    "headers": {
+      "x-oidc-csrf-token": "invalid-csrf-token"
+    },
+    "body": {
+      "csrf_token": "invalid-csrf-token"
+    },
+    "group": "Sessions & Logout"
+  },
+  {
+    "id": "tc-59",
+    "name": "59 Valid Post Logout Redirect",
+    "method": "POST",
+    "path": "/logout",
+    "description": "Expected: Valid post-logout redirect is accepted.",
+    "headers": {
+      "x-oidc-csrf-token": "{{csrfToken}}"
+    },
+    "body": {
+      "client_id": "{{clientId}}",
+      "post_logout_redirect_uri": "{{postLogoutRedirectUri}}",
+      "state": "{{state}}",
+      "csrf_token": "{{csrfToken}}"
+    },
+    "group": "Sessions & Logout"
+  },
+  {
+    "id": "tc-60",
+    "name": "60 Invalid Post Logout Redirect",
+    "method": "POST",
+    "path": "/logout",
+    "description": "Expected: Invalid post-logout redirect is rejected.",
+    "body": {
+      "client_id": "{{clientId}}",
+      "post_logout_redirect_uri": "{{invalidRedirectUri}}",
+      "state": "{{state}}"
+    },
+    "group": "Sessions & Logout"
+  },
+  {
+    "id": "tc-61",
+    "name": "61 Audit Event Security Action",
+    "method": "POST",
+    "path": "/admin/users",
+    "description": "Expected: Security-relevant admin action records audit event safely.",
+    "admin": true,
+    "body": {
+      "email": "{{adminUserEmail}}",
+      "password": "{{userPassword}}",
+      "name": "Audit User",
+      "email_verified": true
+    },
+    "group": "Admin Users"
+  },
+  {
+    "id": "tc-62",
+    "name": "62 Create Admin User",
+    "method": "POST",
+    "path": "/admin/users",
+    "description": "Expected: Admin-provisioned user is created safely.",
+    "admin": true,
+    "body": {
+      "email": "{{adminUserEmail}}",
+      "password": "{{userPassword}}",
+      "name": "Admin User",
+      "email_verified": true
+    },
+    "group": "Admin Users"
+  },
+  {
+    "id": "tc-63",
+    "name": "63 Duplicate Admin User",
+    "method": "POST",
+    "path": "/admin/users",
+    "description": "Expected: Duplicate admin-provisioned user is rejected.",
+    "admin": true,
+    "body": {
+      "email": "{{adminUserEmail}}",
+      "password": "{{userPassword}}",
+      "name": "Duplicate Admin User",
+      "email_verified": true
+    },
+    "group": "Admin Users"
+  },
+  {
+    "id": "tc-64",
+    "name": "64 Get Admin User View",
+    "method": "GET",
+    "path": "/admin/users/{sub}",
+    "description": "Expected: Bounded admin user view is returned without sensitive fields.",
+    "admin": true,
+    "pathParams": {
+      "sub": "{{subject}}"
+    },
+    "group": "Admin Users"
+  },
+  {
+    "id": "tc-65",
+    "name": "65 Disable User",
+    "method": "POST",
+    "path": "/admin/users/{sub}/disable",
+    "description": "Expected: User is disabled safely without exposing sensitive fields.",
+    "admin": true,
+    "pathParams": {
+      "sub": "{{subject}}"
+    },
+    "group": "Admin Users"
+  },
+  {
+    "id": "tc-66",
+    "name": "66 Enable User",
+    "method": "POST",
+    "path": "/admin/users/{sub}/enable",
+    "description": "Expected: User is enabled safely without exposing sensitive fields.",
+    "admin": true,
+    "pathParams": {
+      "sub": "{{subject}}"
+    },
+    "group": "Admin Users"
+  },
+  {
+    "id": "tc-67",
+    "name": "67 Update Controlled Profile",
+    "method": "PATCH",
+    "path": "/admin/users/{sub}/profile",
+    "description": "Expected: Only approved profile fields are updated.",
+    "admin": true,
+    "pathParams": {
+      "sub": "{{subject}}"
+    },
+    "body": {
+      "name": "Updated API Explorer User",
+      "avatar_url": "https://example.com/avatar.png"
+    },
+    "group": "Admin Users"
+  },
+  {
+    "id": "tc-68",
+    "name": "68 Reject Forbidden Profile Mutation",
+    "method": "PATCH",
+    "path": "/admin/users/{sub}/profile",
+    "description": "Expected: Forbidden user fields are rejected.",
+    "admin": true,
+    "pathParams": {
+      "sub": "{{subject}}"
+    },
+    "body": {
+      "email": "changed@example.com",
+      "password_hash": "forbidden"
+    },
+    "group": "Admin Users"
+  },
+  {
+    "id": "tc-69",
+    "name": "69 Mark Email Verified",
+    "method": "POST",
+    "path": "/admin/users/{sub}/email-verification/mark-verified",
+    "description": "Expected: Admin override marks email as verified safely.",
+    "admin": true,
+    "pathParams": {
+      "sub": "{{subject}}"
+    },
+    "group": "Admin Users"
+  },
+  {
+    "id": "tc-70",
+    "name": "70 Create OIDC Client",
+    "method": "POST",
+    "path": "/admin/clients",
+    "description": "Expected: Client is created and one-time raw secret is returned without hash exposure.",
+    "admin": true,
+    "body": {
+      "name": "API Explorer Client",
+      "redirectUris": [
+        "{{redirectUri}}"
+      ],
+      "postLogoutRedirectUris": [
+        "{{postLogoutRedirectUri}}"
+      ],
+      "allowedScopes": [
+        "openid",
+        "profile",
+        "email",
+        "offline_access"
+      ],
+      "grantTypes": [
+        "authorization_code",
+        "refresh_token"
+      ],
+      "responseTypes": [
+        "code"
+      ]
+    },
+    "group": "Admin Clients"
+  },
+  {
+    "id": "tc-71",
+    "name": "71 Reject Client Secret Fields",
+    "method": "POST",
+    "path": "/admin/clients",
+    "description": "Expected: Supplied client id, secret, or secret hash is rejected.",
+    "admin": true,
+    "body": {
+      "name": "API Explorer Client",
+      "redirectUris": [
+        "{{redirectUri}}"
+      ],
+      "postLogoutRedirectUris": [
+        "{{postLogoutRedirectUri}}"
+      ],
+      "allowedScopes": [
+        "openid",
+        "profile",
+        "email",
+        "offline_access"
+      ],
+      "grantTypes": [
+        "authorization_code",
+        "refresh_token"
+      ],
+      "responseTypes": [
+        "code"
+      ],
+      "clientId": "{{clientId}}",
+      "clientSecret": "forbidden",
+      "clientSecretHash": "forbidden"
+    },
+    "group": "Admin Clients"
+  },
+  {
+    "id": "tc-72",
+    "name": "72 Get Client",
+    "method": "GET",
+    "path": "/admin/clients/{clientId}",
+    "description": "Expected: Client metadata is returned without raw secret or secret hash.",
+    "admin": true,
+    "pathParams": {
+      "clientId": "{{clientId}}"
+    },
+    "group": "Admin Clients"
+  },
+  {
+    "id": "tc-73",
+    "name": "73 List Clients",
+    "method": "GET",
+    "path": "/admin/clients",
+    "description": "Expected: Client list does not expose secrets.",
+    "admin": true,
+    "group": "Admin Clients"
+  },
+  {
+    "id": "tc-74",
+    "name": "74 Update Client Metadata",
+    "method": "PATCH",
+    "path": "/admin/clients/{clientId}",
+    "description": "Expected: Controlled mutable client metadata can be updated.",
+    "admin": true,
+    "pathParams": {
+      "clientId": "{{clientId}}"
+    },
+    "body": {
+      "name": "API Explorer Client Updated",
+      "redirectUris": [
+        "{{redirectUri}}"
+      ],
+      "postLogoutRedirectUris": [
+        "{{postLogoutRedirectUri}}"
+      ],
+      "allowedScopes": [
+        "openid",
+        "profile",
+        "email",
+        "offline_access"
+      ],
+      "grantTypes": [
+        "authorization_code",
+        "refresh_token"
+      ],
+      "responseTypes": [
+        "code"
+      ]
+    },
+    "group": "Admin Clients"
+  },
+  {
+    "id": "tc-75",
+    "name": "75 Reject Forbidden Client Update",
+    "method": "PATCH",
+    "path": "/admin/clients/{clientId}",
+    "description": "Expected: Forbidden client metadata mutation is rejected.",
+    "admin": true,
+    "pathParams": {
+      "clientId": "{{clientId}}"
+    },
+    "body": {
+      "clientId": "{{invalidClientId}}",
+      "clientSecret": "forbidden",
+      "clientSecretHash": "forbidden"
+    },
+    "group": "Admin Clients"
+  },
+  {
+    "id": "tc-76",
+    "name": "76 Reject Wildcard Redirect URI",
+    "method": "PATCH",
+    "path": "/admin/clients/{clientId}",
+    "description": "Expected: Wildcard redirect URI is rejected.",
+    "admin": true,
+    "pathParams": {
+      "clientId": "{{clientId}}"
+    },
+    "body": {
+      "redirectUris": [
+        "https://*.example.com/callback"
+      ]
+    },
+    "group": "Admin Clients"
+  },
+  {
+    "id": "tc-77",
+    "name": "77 Reject Redirect Abuse",
+    "method": "GET",
+    "path": "/authorize",
+    "description": "Expected: Prefix or substring redirect URI abuse is rejected.",
+    "query": {
+      "response_type": "code",
+      "client_id": "{{clientId}}",
+      "redirect_uri": "http://localhost:5173/callback.evil.example",
+      "scope": "openid profile email offline_access",
+      "state": "{{state}}",
+      "nonce": "{{nonce}}",
+      "code_challenge": "{{codeChallenge}}",
+      "code_challenge_method": "S256"
+    },
+    "group": "Admin Clients"
+  },
+  {
+    "id": "tc-78",
+    "name": "78 Reject Unknown Grant Type",
+    "method": "PATCH",
+    "path": "/admin/clients/{clientId}",
+    "description": "Expected: Unknown grant type is rejected.",
+    "admin": true,
+    "pathParams": {
+      "clientId": "{{clientId}}"
+    },
+    "body": {
+      "grantTypes": [
+        "authorization_code",
+        "unknown_grant"
+      ]
+    },
+    "group": "Admin Clients"
+  },
+  {
+    "id": "tc-79",
+    "name": "79 Rotate Client Secret",
+    "method": "POST",
+    "path": "/admin/clients/{clientId}/rotate-secret",
+    "description": "Expected: New raw client secret is returned once without exposing hash.",
+    "admin": true,
+    "pathParams": {
+      "clientId": "{{clientId}}"
+    },
+    "group": "Admin Clients"
+  },
+  {
+    "id": "tc-80",
+    "name": "80 Disable Client",
+    "method": "POST",
+    "path": "/admin/clients/{clientId}/disable",
+    "description": "Expected: Client is disabled and no longer validates as active.",
+    "admin": true,
+    "pathParams": {
+      "clientId": "{{clientId}}"
+    },
+    "group": "Admin Clients"
+  },
+  {
+    "id": "tc-81",
+    "name": "81 Health Endpoint",
+    "method": "GET",
+    "path": "/health",
+    "description": "Expected: Health endpoint returns successful operational status.",
+    "group": "System & Security"
+  },
+  {
+    "id": "tc-82",
+    "name": "82 Readiness Endpoint Healthy",
+    "method": "GET",
+    "path": "/ready",
+    "description": "Expected: Readiness endpoint returns healthy when dependencies are available.",
+    "group": "System & Security"
+  },
+  {
+    "id": "tc-83",
+    "name": "83 Readiness Dependency Down",
+    "method": "GET",
+    "path": "/ready",
+    "description": "Expected: Dependency-down state is reported safely.",
+    "group": "System & Security"
+  },
+  {
+    "id": "tc-84",
+    "name": "84 Metrics Endpoint",
+    "method": "GET",
+    "path": "/metrics",
+    "description": "Expected: Metrics endpoint returns safe aggregate metrics.",
+    "group": "System & Security"
+  },
+  {
+    "id": "tc-85",
+    "name": "85 Correlation Header",
+    "method": "GET",
+    "path": "/health",
+    "description": "Expected: Request correlation header behavior is present.",
+    "headers": {
+      "x-correlation-id": "{{correlationId}}"
+    },
+    "group": "System & Security"
+  },
+  {
+    "id": "tc-86",
+    "name": "86 JWKS Endpoint",
+    "method": "GET",
+    "path": "/jwks",
+    "description": "Expected: JWKS endpoint returns public key set safely.",
+    "group": "System & Security"
+  },
+  {
+    "id": "tc-87",
+    "name": "87 JWT Header Contains KID",
+    "method": "POST",
+    "path": "/token",
+    "description": "Expected: JWT header includes kid for key identification.",
+    "contentType": "form",
+    "body": {
+      "grant_type": "authorization_code",
+      "code": "{{authorizationCode}}",
+      "redirect_uri": "{{redirectUri}}",
+      "client_id": "{{clientId}}",
+      "code_verifier": "{{codeVerifier}}"
+    },
+    "group": "System & Security"
+  }
+]

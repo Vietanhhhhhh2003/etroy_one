@@ -1,0 +1,25 @@
+name: eTroy One CI
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - run: git diff --exit-code -- docs/api/openapi.json
+      - run: docker compose config --quiet
+      - run: docker compose up --build -d --wait --wait-timeout 180
+      - run: node scripts/smoke.mjs
+      - name: Container diagnostics
+        if: failure()
+        run: docker compose logs --tail=100
+      - name: Stop test services
+        if: always()
+        run: docker compose down -v

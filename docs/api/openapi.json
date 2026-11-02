@@ -1,0 +1,3122 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "eTroy One API",
+    "version": "1.0.0",
+    "description": "OIDC provider, identity lifecycle and administration. The 87 original API Explorer scenarios are preserved as named examples and x-explorer-cases. Replace {{placeholders}} before executing requests. Browser login establishes the same-origin session cookie; copy the etroy_oidc_csrf cookie value to x-oidc-csrf-token for logout. Admin context is inherited from upstream and is not a complete authorization mechanism. Do not expose this development configuration publicly."
+  },
+  "servers": [
+    {
+      "url": "/",
+      "description": "Current eTroy One origin"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "System & Security"
+        ],
+        "summary": "Health Endpoint",
+        "operationId": "get__health",
+        "description": "Explorer scenarios:\n\n- **81 Health Endpoint**: Expected: Health endpoint returns successful operational status.\n- **85 Correlation Header**: Expected: Request correlation header behavior is present.",
+        "parameters": [
+          {
+            "name": "x-correlation-id",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "tc-85": {
+                "summary": "85 Correlation Header",
+                "value": "{{correlationId}}"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [
+          "tc-81",
+          "tc-85"
+        ]
+      }
+    },
+    "/ready": {
+      "get": {
+        "tags": [
+          "System & Security"
+        ],
+        "summary": "Readiness Endpoint Healthy",
+        "operationId": "get__ready",
+        "description": "Explorer scenarios:\n\n- **82 Readiness Endpoint Healthy**: Expected: Readiness endpoint returns healthy when dependencies are available.\n- **83 Readiness Dependency Down**: Expected: Dependency-down state is reported safely.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          },
+          "503": {
+            "description": "Dependencies unavailable."
+          }
+        },
+        "x-explorer-cases": [
+          "tc-82",
+          "tc-83"
+        ]
+      }
+    },
+    "/metrics": {
+      "get": {
+        "tags": [
+          "System & Security"
+        ],
+        "summary": "Metrics Endpoint",
+        "operationId": "get__metrics",
+        "description": "Explorer scenarios:\n\n- **84 Metrics Endpoint**: Expected: Metrics endpoint returns safe aggregate metrics.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [
+          "tc-84"
+        ]
+      }
+    },
+    "/authorize": {
+      "get": {
+        "tags": [
+          "Authorization & Tokens"
+        ],
+        "summary": "Valid Authorization Request",
+        "operationId": "get__authorize",
+        "description": "Explorer scenarios:\n\n- **17 Valid Authorization Request**: Expected: Valid OIDC authorization request passes validation.\n- **18 Missing Response Type**: Expected: Missing response_type returns controlled error.\n- **19 Invalid Response Type**: Expected: Unsupported response type is rejected.\n- **20 Invalid Client ID**: Expected: Unknown or invalid client is rejected.\n- **21 Invalid Redirect URI**: Expected: Unregistered redirect URI is rejected.\n- **22 Missing PKCE Challenge**: Expected: Missing code_challenge is rejected.\n- **23 Invalid PKCE Method**: Expected: Non-S256 PKCE method is rejected.\n- **48 Start Auth Session**: Expected: Authorization flow can start and prepare session behavior.\n- **50 SSO Reuse**: Expected: Active session allows SSO reuse.\n- **51 SSO Invalid Client Guard**: Expected: SSO does not bypass invalid client validation.\n- **52 SSO Invalid Redirect Guard**: Expected: SSO does not bypass redirect URI validation.\n- **53 Missing Session Path**: Expected: Missing session requires normal authentication path.\n- **56 Logout Blocks SSO Reuse**: Expected: Logged-out session cannot be reused for SSO.\n- **77 Reject Redirect Abuse**: Expected: Prefix or substring redirect URI abuse is rejected.",
+        "parameters": [
+          {
+            "name": "response_type",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "tc-17": {
+                "summary": "17 Valid Authorization Request",
+                "value": "code"
+              },
+              "tc-19": {
+                "summary": "19 Invalid Response Type",
+                "value": "token"
+              },
+              "tc-20": {
+                "summary": "20 Invalid Client ID",
+                "value": "code"
+              },
+              "tc-21": {
+                "summary": "21 Invalid Redirect URI",
+                "value": "code"
+              },
+              "tc-22": {
+                "summary": "22 Missing PKCE Challenge",
+                "value": "code"
+              },
+              "tc-23": {
+                "summary": "23 Invalid PKCE Method",
+                "value": "code"
+              },
+              "tc-48": {
+                "summary": "48 Start Auth Session",
+                "value": "code"
+              },
+              "tc-50": {
+                "summary": "50 SSO Reuse",
+                "value": "code"
+              },
+              "tc-51": {
+                "summary": "51 SSO Invalid Client Guard",
+                "value": "code"
+              },
+              "tc-52": {
+                "summary": "52 SSO Invalid Redirect Guard",
+                "value": "code"
+              },
+              "tc-53": {
+                "summary": "53 Missing Session Path",
+                "value": "code"
+              },
+              "tc-56": {
+                "summary": "56 Logout Blocks SSO Reuse",
+                "value": "code"
+              },
+              "tc-77": {
+                "summary": "77 Reject Redirect Abuse",
+                "value": "code"
+              }
+            }
+          },
+          {
+            "name": "client_id",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "tc-17": {
+                "summary": "17 Valid Authorization Request",
+                "value": "{{clientId}}"
+              },
+              "tc-18": {
+                "summary": "18 Missing Response Type",
+                "value": "{{clientId}}"
+              },
+              "tc-19": {
+                "summary": "19 Invalid Response Type",
+                "value": "{{clientId}}"
+              },
+              "tc-20": {
+                "summary": "20 Invalid Client ID",
+                "value": "{{invalidClientId}}"
+              },
+              "tc-21": {
+                "summary": "21 Invalid Redirect URI",
+                "value": "{{clientId}}"
+              },
+              "tc-22": {
+                "summary": "22 Missing PKCE Challenge",
+                "value": "{{clientId}}"
+              },
+              "tc-23": {
+                "summary": "23 Invalid PKCE Method",
+                "value": "{{clientId}}"
+              },
+              "tc-48": {
+                "summary": "48 Start Auth Session",
+                "value": "{{clientId}}"
+              },
+              "tc-50": {
+                "summary": "50 SSO Reuse",
+                "value": "{{clientId}}"
+              },
+              "tc-51": {
+                "summary": "51 SSO Invalid Client Guard",
+                "value": "{{invalidClientId}}"
+              },
+              "tc-52": {
+                "summary": "52 SSO Invalid Redirect Guard",
+                "value": "{{clientId}}"
+              },
+              "tc-53": {
+                "summary": "53 Missing Session Path",
+                "value": "{{clientId}}"
+              },
+              "tc-56": {
+                "summary": "56 Logout Blocks SSO Reuse",
+                "value": "{{clientId}}"
+              },
+              "tc-77": {
+                "summary": "77 Reject Redirect Abuse",
+                "value": "{{clientId}}"
+              }
+            }
+          },
+          {
+            "name": "redirect_uri",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "tc-17": {
+                "summary": "17 Valid Authorization Request",
+                "value": "{{redirectUri}}"
+              },
+              "tc-18": {
+                "summary": "18 Missing Response Type",
+                "value": "{{redirectUri}}"
+              },
+              "tc-19": {
+                "summary": "19 Invalid Response Type",
+                "value": "{{redirectUri}}"
+              },
+              "tc-20": {
+                "summary": "20 Invalid Client ID",
+                "value": "{{redirectUri}}"
+              },
+              "tc-21": {
+                "summary": "21 Invalid Redirect URI",
+                "value": "{{invalidRedirectUri}}"
+              },
+              "tc-22": {
+                "summary": "22 Missing PKCE Challenge",
+                "value": "{{redirectUri}}"
+              },
+              "tc-23": {
+                "summary": "23 Invalid PKCE Method",
+                "value": "{{redirectUri}}"
+              },
+              "tc-48": {
+                "summary": "48 Start Auth Session",
+                "value": "{{redirectUri}}"
+              },
+              "tc-50": {
+                "summary": "50 SSO Reuse",
+                "value": "{{redirectUri}}"
+              },
+              "tc-51": {
+                "summary": "51 SSO Invalid Client Guard",
+                "value": "{{redirectUri}}"
+              },
+              "tc-52": {
+                "summary": "52 SSO Invalid Redirect Guard",
+                "value": "{{invalidRedirectUri}}"
+              },
+              "tc-53": {
+                "summary": "53 Missing Session Path",
+                "value": "{{redirectUri}}"
+              },
+              "tc-56": {
+                "summary": "56 Logout Blocks SSO Reuse",
+                "value": "{{redirectUri}}"
+              },
+              "tc-77": {
+                "summary": "77 Reject Redirect Abuse",
+                "value": "http://localhost:5173/callback.evil.example"
+              }
+            }
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "tc-17": {
+                "summary": "17 Valid Authorization Request",
+                "value": "openid profile email offline_access"
+              },
+              "tc-18": {
+                "summary": "18 Missing Response Type",
+                "value": "openid profile email offline_access"
+              },
+              "tc-19": {
+                "summary": "19 Invalid Response Type",
+                "value": "openid profile email offline_access"
+              },
+              "tc-20": {
+                "summary": "20 Invalid Client ID",
+                "value": "openid profile email offline_access"
+              },
+              "tc-21": {
+                "summary": "21 Invalid Redirect URI",
+                "value": "openid profile email offline_access"
+              },
+              "tc-22": {
+                "summary": "22 Missing PKCE Challenge",
+                "value": "openid profile email offline_access"
+              },
+              "tc-23": {
+                "summary": "23 Invalid PKCE Method",
+                "value": "openid profile email offline_access"
+              },
+              "tc-48": {
+                "summary": "48 Start Auth Session",
+                "value": "openid profile email offline_access"
+              },
+              "tc-50": {
+                "summary": "50 SSO Reuse",
+                "value": "openid profile email offline_access"
+              },
+              "tc-51": {
+                "summary": "51 SSO Invalid Client Guard",
+                "value": "openid profile email offline_access"
+              },
+              "tc-52": {
+                "summary": "52 SSO Invalid Redirect Guard",
+                "value": "openid profile email offline_access"
+              },
+              "tc-53": {
+                "summary": "53 Missing Session Path",
+                "value": "openid profile email offline_access"
+              },
+              "tc-56": {
+                "summary": "56 Logout Blocks SSO Reuse",
+                "value": "openid profile email offline_access"
+              },
+              "tc-77": {
+                "summary": "77 Reject Redirect Abuse",
+                "value": "openid profile email offline_access"
+              }
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "tc-17": {
+                "summary": "17 Valid Authorization Request",
+                "value": "{{state}}"
+              },
+              "tc-18": {
+                "summary": "18 Missing Response Type",
+                "value": "{{state}}"
+              },
+              "tc-19": {
+                "summary": "19 Invalid Response Type",
+                "value": "{{state}}"
+              },
+              "tc-20": {
+                "summary": "20 Invalid Client ID",
+                "value": "{{state}}"
+              },
+              "tc-21": {
+                "summary": "21 Invalid Redirect URI",
+                "value": "{{state}}"
+              },
+              "tc-22": {
+                "summary": "22 Missing PKCE Challenge",
+                "value": "{{state}}"
+              },
+              "tc-23": {
+                "summary": "23 Invalid PKCE Method",
+                "value": "{{state}}"
+              },
+              "tc-48": {
+                "summary": "48 Start Auth Session",
+                "value": "{{state}}"
+              },
+              "tc-50": {
+                "summary": "50 SSO Reuse",
+                "value": "{{state}}"
+              },
+              "tc-51": {
+                "summary": "51 SSO Invalid Client Guard",
+                "value": "{{state}}"
+              },
+              "tc-52": {
+                "summary": "52 SSO Invalid Redirect Guard",
+                "value": "{{state}}"
+              },
+              "tc-53": {
+                "summary": "53 Missing Session Path",
+                "value": "{{state}}"
+              },
+              "tc-56": {
+                "summary": "56 Logout Blocks SSO Reuse",
+                "value": "{{state}}"
+              },
+              "tc-77": {
+                "summary": "77 Reject Redirect Abuse",
+                "value": "{{state}}"
+              }
+            }
+          },
+          {
+            "name": "nonce",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "tc-17": {
+                "summary": "17 Valid Authorization Request",
+                "value": "{{nonce}}"
+              },
+              "tc-18": {
+                "summary": "18 Missing Response Type",
+                "value": "{{nonce}}"
+              },
+              "tc-19": {
+                "summary": "19 Invalid Response Type",
+                "value": "{{nonce}}"
+              },
+              "tc-20": {
+                "summary": "20 Invalid Client ID",
+                "value": "{{nonce}}"
+              },
+              "tc-21": {
+                "summary": "21 Invalid Redirect URI",
+                "value": "{{nonce}}"
+              },
+              "tc-22": {
+                "summary": "22 Missing PKCE Challenge",
+                "value": "{{nonce}}"
+              },
+              "tc-23": {
+                "summary": "23 Invalid PKCE Method",
+                "value": "{{nonce}}"
+              },
+              "tc-48": {
+                "summary": "48 Start Auth Session",
+                "value": "{{nonce}}"
+              },
+              "tc-50": {
+                "summary": "50 SSO Reuse",
+                "value": "{{nonce}}"
+              },
+              "tc-51": {
+                "summary": "51 SSO Invalid Client Guard",
+                "value": "{{nonce}}"
+              },
+              "tc-52": {
+                "summary": "52 SSO Invalid Redirect Guard",
+                "value": "{{nonce}}"
+              },
+              "tc-53": {
+                "summary": "53 Missing Session Path",
+                "value": "{{nonce}}"
+              },
+              "tc-56": {
+                "summary": "56 Logout Blocks SSO Reuse",
+                "value": "{{nonce}}"
+              },
+              "tc-77": {
+                "summary": "77 Reject Redirect Abuse",
+                "value": "{{nonce}}"
+              }
+            }
+          },
+          {
+            "name": "code_challenge",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "tc-17": {
+                "summary": "17 Valid Authorization Request",
+                "value": "{{codeChallenge}}"
+              },
+              "tc-18": {
+                "summary": "18 Missing Response Type",
+                "value": "{{codeChallenge}}"
+              },
+              "tc-19": {
+                "summary": "19 Invalid Response Type",
+                "value": "{{codeChallenge}}"
+              },
+              "tc-20": {
+                "summary": "20 Invalid Client ID",
+                "value": "{{codeChallenge}}"
+              },
+              "tc-21": {
+                "summary": "21 Invalid Redirect URI",
+                "value": "{{codeChallenge}}"
+              },
+              "tc-23": {
+                "summary": "23 Invalid PKCE Method",
+                "value": "{{codeChallenge}}"
+              },
+              "tc-48": {
+                "summary": "48 Start Auth Session",
+                "value": "{{codeChallenge}}"
+              },
+              "tc-50": {
+                "summary": "50 SSO Reuse",
+                "value": "{{codeChallenge}}"
+              },
+              "tc-51": {
+                "summary": "51 SSO Invalid Client Guard",
+                "value": "{{codeChallenge}}"
+              },
+              "tc-52": {
+                "summary": "52 SSO Invalid Redirect Guard",
+                "value": "{{codeChallenge}}"
+              },
+              "tc-53": {
+                "summary": "53 Missing Session Path",
+                "value": "{{codeChallenge}}"
+              },
+              "tc-56": {
+                "summary": "56 Logout Blocks SSO Reuse",
+                "value": "{{codeChallenge}}"
+              },
+              "tc-77": {
+                "summary": "77 Reject Redirect Abuse",
+                "value": "{{codeChallenge}}"
+              }
+            }
+          },
+          {
+            "name": "code_challenge_method",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "tc-17": {
+                "summary": "17 Valid Authorization Request",
+                "value": "S256"
+              },
+              "tc-18": {
+                "summary": "18 Missing Response Type",
+                "value": "S256"
+              },
+              "tc-19": {
+                "summary": "19 Invalid Response Type",
+                "value": "S256"
+              },
+              "tc-20": {
+                "summary": "20 Invalid Client ID",
+                "value": "S256"
+              },
+              "tc-21": {
+                "summary": "21 Invalid Redirect URI",
+                "value": "S256"
+              },
+              "tc-22": {
+                "summary": "22 Missing PKCE Challenge",
+                "value": "S256"
+              },
+              "tc-23": {
+                "summary": "23 Invalid PKCE Method",
+                "value": "plain"
+              },
+              "tc-48": {
+                "summary": "48 Start Auth Session",
+                "value": "S256"
+              },
+              "tc-50": {
+                "summary": "50 SSO Reuse",
+                "value": "S256"
+              },
+              "tc-51": {
+                "summary": "51 SSO Invalid Client Guard",
+                "value": "S256"
+              },
+              "tc-52": {
+                "summary": "52 SSO Invalid Redirect Guard",
+                "value": "S256"
+              },
+              "tc-53": {
+                "summary": "53 Missing Session Path",
+                "value": "S256"
+              },
+              "tc-56": {
+                "summary": "56 Logout Blocks SSO Reuse",
+                "value": "S256"
+              },
+              "tc-77": {
+                "summary": "77 Reject Redirect Abuse",
+                "value": "S256"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "302": {
+            "description": "Redirect to interaction UI or registered client.",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [
+          "tc-17",
+          "tc-18",
+          "tc-19",
+          "tc-20",
+          "tc-21",
+          "tc-22",
+          "tc-23",
+          "tc-48",
+          "tc-50",
+          "tc-51",
+          "tc-52",
+          "tc-53",
+          "tc-56",
+          "tc-77"
+        ]
+      }
+    },
+    "/authorize/interaction": {
+      "get": {
+        "tags": [
+          "OIDC & Account"
+        ],
+        "summary": "GET /authorize/interaction",
+        "operationId": "get__authorize_interaction",
+        "description": "Integrated backend endpoint.",
+        "parameters": [
+          {
+            "name": "interaction_id",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "example": {
+                "summary": "Example",
+                "value": "{{interactionId}}"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [],
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ]
+      }
+    },
+    "/jwks": {
+      "get": {
+        "tags": [
+          "System & Security"
+        ],
+        "summary": "JWKS Endpoint",
+        "operationId": "get__jwks",
+        "description": "Explorer scenarios:\n\n- **86 JWKS Endpoint**: Expected: JWKS endpoint returns public key set safely.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [
+          "tc-86"
+        ]
+      }
+    },
+    "/authorize/decision": {
+      "post": {
+        "tags": [
+          "Authorization & Tokens"
+        ],
+        "summary": "Continue Authorization",
+        "operationId": "post__authorize_decision",
+        "description": "Explorer scenarios:\n\n- **24 Continue Authorization**: Expected: Valid continuation issues authorization code or redirect result.\n- **25 Continue Auth Wrong Password**: Expected: Invalid continuation credentials are rejected without leaking details.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [
+          "tc-24",
+          "tc-25"
+        ],
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "interaction_id": {
+                    "type": "string"
+                  },
+                  "decision": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "tc-24": {
+                  "summary": "24 Continue Authorization",
+                  "value": {
+                    "interaction_id": "{{interactionId}}",
+                    "decision": "approve"
+                  }
+                },
+                "tc-25": {
+                  "summary": "25 Continue Auth Wrong Password",
+                  "value": {
+                    "interaction_id": "{{interactionId}}",
+                    "decision": "deny"
+                  }
+                },
+                "example": {
+                  "summary": "Example",
+                  "value": {
+                    "interaction_id": "{{interactionId}}",
+                    "decision": "approve"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/token": {
+      "post": {
+        "tags": [
+          "Authorization & Tokens"
+        ],
+        "summary": "Token Exchange",
+        "operationId": "post__token",
+        "description": "Explorer scenarios:\n\n- **26 Token Exchange**: Expected: Valid authorization code exchange returns token response.\n- **27 Invalid Token Exchange**: Expected: Invalid, missing, reused, expired code or PKCE mismatch is rejected.\n- **28 JWT Access Token**: Expected: Token response includes JWT access token.\n- **29 ID Token**: Expected: Token response includes signed ID Token.\n- **33 Refresh Token Issued**: Expected: Authorization-code exchange returns refresh token when expected.\n- **34 Refresh Token Grant**: Expected: Valid refresh token returns a new access token.\n- **35 Missing Refresh Token**: Expected: Missing refresh token is rejected.\n- **36 Invalid Refresh Token**: Expected: Invalid refresh token is rejected without exposing internals.\n- **37 Client Mismatch Refresh**: Expected: Refresh token bound to another client is rejected.\n- **38 Refresh Token Rotation**: Expected: Refresh succeeds and rotates refresh token.\n- **39 Old Refresh Token Reuse**: Expected: Reuse of old refresh token is rejected.\n- **40 Compromised Token Family**: Expected: Reuse detection blocks compromised token family.\n- **41 Concurrent Refresh Check**: Expected: Concurrent refresh behavior is controlled.\n- **44 Revoked Refresh Reuse**: Expected: Revoked refresh token cannot be used.\n- **87 JWT Header Contains KID**: Expected: JWT header includes kid for key identification.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [
+          "tc-26",
+          "tc-27",
+          "tc-28",
+          "tc-29",
+          "tc-33",
+          "tc-34",
+          "tc-35",
+          "tc-36",
+          "tc-37",
+          "tc-38",
+          "tc-39",
+          "tc-40",
+          "tc-41",
+          "tc-44",
+          "tc-87"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "grant_type": {
+                    "type": "string"
+                  },
+                  "code": {
+                    "type": "string"
+                  },
+                  "redirect_uri": {
+                    "type": "string"
+                  },
+                  "client_id": {
+                    "type": "string"
+                  },
+                  "code_verifier": {
+                    "type": "string"
+                  },
+                  "refresh_token": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "tc-26": {
+                  "summary": "26 Token Exchange",
+                  "value": {
+                    "grant_type": "authorization_code",
+                    "code": "{{authorizationCode}}",
+                    "redirect_uri": "{{redirectUri}}",
+                    "client_id": "{{clientId}}",
+                    "code_verifier": "{{codeVerifier}}"
+                  }
+                },
+                "tc-27": {
+                  "summary": "27 Invalid Token Exchange",
+                  "value": {
+                    "grant_type": "authorization_code",
+                    "code": "{{invalidAuthorizationCode}}",
+                    "redirect_uri": "{{redirectUri}}",
+                    "client_id": "{{clientId}}",
+                    "code_verifier": "{{codeVerifier}}"
+                  }
+                },
+                "tc-28": {
+                  "summary": "28 JWT Access Token",
+                  "value": {
+                    "grant_type": "authorization_code",
+                    "code": "{{authorizationCode}}",
+                    "redirect_uri": "{{redirectUri}}",
+                    "client_id": "{{clientId}}",
+                    "code_verifier": "{{codeVerifier}}"
+                  }
+                },
+                "tc-29": {
+                  "summary": "29 ID Token",
+                  "value": {
+                    "grant_type": "authorization_code",
+                    "code": "{{authorizationCode}}",
+                    "redirect_uri": "{{redirectUri}}",
+                    "client_id": "{{clientId}}",
+                    "code_verifier": "{{codeVerifier}}"
+                  }
+                },
+                "tc-33": {
+                  "summary": "33 Refresh Token Issued",
+                  "value": {
+                    "grant_type": "authorization_code",
+                    "code": "{{authorizationCode}}",
+                    "redirect_uri": "{{redirectUri}}",
+                    "client_id": "{{clientId}}",
+                    "code_verifier": "{{codeVerifier}}"
+                  }
+                },
+                "tc-34": {
+                  "summary": "34 Refresh Token Grant",
+                  "value": {
+                    "grant_type": "refresh_token",
+                    "refresh_token": "{{refreshToken}}",
+                    "client_id": "{{clientId}}"
+                  }
+                },
+                "tc-35": {
+                  "summary": "35 Missing Refresh Token",
+                  "value": {
+                    "grant_type": "refresh_token",
+                    "client_id": "{{clientId}}"
+                  }
+                },
+                "tc-36": {
+                  "summary": "36 Invalid Refresh Token",
+                  "value": {
+                    "grant_type": "refresh_token",
+                    "refresh_token": "{{invalidRefreshToken}}",
+                    "client_id": "{{clientId}}"
+                  }
+                },
+                "tc-37": {
+                  "summary": "37 Client Mismatch Refresh",
+                  "value": {
+                    "grant_type": "refresh_token",
+                    "refresh_token": "{{refreshToken}}",
+                    "client_id": "{{otherClientId}}"
+                  }
+                },
+                "tc-38": {
+                  "summary": "38 Refresh Token Rotation",
+                  "value": {
+                    "grant_type": "refresh_token",
+                    "refresh_token": "{{refreshToken}}",
+                    "client_id": "{{clientId}}"
+                  }
+                },
+                "tc-39": {
+                  "summary": "39 Old Refresh Token Reuse",
+                  "value": {
+                    "grant_type": "refresh_token",
+                    "refresh_token": "{{refreshToken}}",
+                    "client_id": "{{clientId}}"
+                  }
+                },
+                "tc-40": {
+                  "summary": "40 Compromised Token Family",
+                  "value": {
+                    "grant_type": "refresh_token",
+                    "refresh_token": "{{refreshToken}}",
+                    "client_id": "{{clientId}}"
+                  }
+                },
+                "tc-41": {
+                  "summary": "41 Concurrent Refresh Check",
+                  "value": {
+                    "grant_type": "refresh_token",
+                    "refresh_token": "{{refreshToken}}",
+                    "client_id": "{{clientId}}"
+                  }
+                },
+                "tc-44": {
+                  "summary": "44 Revoked Refresh Reuse",
+                  "value": {
+                    "grant_type": "refresh_token",
+                    "refresh_token": "{{refreshToken}}",
+                    "client_id": "{{clientId}}"
+                  }
+                },
+                "tc-87": {
+                  "summary": "87 JWT Header Contains KID",
+                  "value": {
+                    "grant_type": "authorization_code",
+                    "code": "{{authorizationCode}}",
+                    "redirect_uri": "{{redirectUri}}",
+                    "client_id": "{{clientId}}",
+                    "code_verifier": "{{codeVerifier}}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/revoke": {
+      "post": {
+        "tags": [
+          "Token Lifecycle"
+        ],
+        "summary": "Revoke Refresh Token",
+        "operationId": "post__revoke",
+        "description": "Explorer scenarios:\n\n- **43 Revoke Refresh Token**: Expected: Refresh token is revoked successfully.\n- **47 Revoke Unknown Token**: Expected: Unknown token revoke is non-revealing or idempotent.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [
+          "tc-43",
+          "tc-47"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string"
+                  },
+                  "token_type_hint": {
+                    "type": "string"
+                  },
+                  "client_id": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "tc-43": {
+                  "summary": "43 Revoke Refresh Token",
+                  "value": {
+                    "token": "{{refreshToken}}",
+                    "token_type_hint": "refresh_token",
+                    "client_id": "{{clientId}}"
+                  }
+                },
+                "tc-47": {
+                  "summary": "47 Revoke Unknown Token",
+                  "value": {
+                    "token": "{{invalidRefreshToken}}",
+                    "token_type_hint": "refresh_token",
+                    "client_id": "{{clientId}}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/introspect": {
+      "post": {
+        "tags": [
+          "Token Lifecycle"
+        ],
+        "summary": "Introspect Active Token",
+        "operationId": "post__introspect",
+        "description": "Explorer scenarios:\n\n- **42 Introspect Active Token**: Expected: Active refresh token returns active status.\n- **45 Introspect Revoked Token**: Expected: Revoked token returns inactive.\n- **46 Introspect Invalid Token**: Expected: Invalid token returns inactive without revealing internals.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [
+          "tc-42",
+          "tc-45",
+          "tc-46"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string"
+                  },
+                  "token_type_hint": {
+                    "type": "string"
+                  },
+                  "client_id": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "tc-42": {
+                  "summary": "42 Introspect Active Token",
+                  "value": {
+                    "token": "{{refreshToken}}",
+                    "token_type_hint": "refresh_token",
+                    "client_id": "{{clientId}}"
+                  }
+                },
+                "tc-45": {
+                  "summary": "45 Introspect Revoked Token",
+                  "value": {
+                    "token": "{{refreshToken}}",
+                    "token_type_hint": "refresh_token",
+                    "client_id": "{{clientId}}"
+                  }
+                },
+                "tc-46": {
+                  "summary": "46 Introspect Invalid Token",
+                  "value": {
+                    "token": "{{invalidRefreshToken}}",
+                    "token_type_hint": "refresh_token",
+                    "client_id": "{{clientId}}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/logout": {
+      "post": {
+        "tags": [
+          "Sessions & Logout"
+        ],
+        "summary": "Logout Active Session",
+        "operationId": "post__logout",
+        "description": "Explorer scenarios:\n\n- **54 Logout Active Session**: Expected: Logout invalidates active session.\n- **55 Idempotent Logout**: Expected: Repeated logout is safe and idempotent.\n- **57 Logout Without Cookie**: Expected: Missing session cookie is handled safely.\n- **58 Logout Invalid CSRF**: Expected: Invalid CSRF is rejected when CSRF is required.\n- **59 Valid Post Logout Redirect**: Expected: Valid post-logout redirect is accepted.\n- **60 Invalid Post Logout Redirect**: Expected: Invalid post-logout redirect is rejected.",
+        "parameters": [
+          {
+            "name": "x-oidc-csrf-token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "tc-54": {
+                "summary": "54 Logout Active Session",
+                "value": "{{csrfToken}}"
+              },
+              "tc-58": {
+                "summary": "58 Logout Invalid CSRF",
+                "value": "invalid-csrf-token"
+              },
+              "tc-59": {
+                "summary": "59 Valid Post Logout Redirect",
+                "value": "{{csrfToken}}"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [
+          "tc-54",
+          "tc-55",
+          "tc-57",
+          "tc-58",
+          "tc-59",
+          "tc-60"
+        ],
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "csrf_token": {
+                    "type": "string"
+                  },
+                  "client_id": {
+                    "type": "string"
+                  },
+                  "post_logout_redirect_uri": {
+                    "type": "string"
+                  },
+                  "state": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "tc-54": {
+                  "summary": "54 Logout Active Session",
+                  "value": {
+                    "csrf_token": "{{csrfToken}}"
+                  }
+                },
+                "tc-55": {
+                  "summary": "55 Idempotent Logout",
+                  "value": {}
+                },
+                "tc-57": {
+                  "summary": "57 Logout Without Cookie",
+                  "value": {}
+                },
+                "tc-58": {
+                  "summary": "58 Logout Invalid CSRF",
+                  "value": {
+                    "csrf_token": "invalid-csrf-token"
+                  }
+                },
+                "tc-59": {
+                  "summary": "59 Valid Post Logout Redirect",
+                  "value": {
+                    "client_id": "{{clientId}}",
+                    "post_logout_redirect_uri": "{{postLogoutRedirectUri}}",
+                    "state": "{{state}}",
+                    "csrf_token": "{{csrfToken}}"
+                  }
+                },
+                "tc-60": {
+                  "summary": "60 Invalid Post Logout Redirect",
+                  "value": {
+                    "client_id": "{{clientId}}",
+                    "post_logout_redirect_uri": "{{invalidRedirectUri}}",
+                    "state": "{{state}}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/userinfo": {
+      "get": {
+        "tags": [
+          "Authorization & Tokens"
+        ],
+        "summary": "UserInfo Valid Token",
+        "operationId": "get__userinfo",
+        "description": "Explorer scenarios:\n\n- **30 UserInfo Valid Token**: Expected: Valid access token returns allowed claims.\n- **31 UserInfo Invalid JWT**: Expected: Invalid JWT is rejected.\n- **32 UserInfo No Authorization**: Expected: Missing authorization header is rejected.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [
+          "tc-30",
+          "tc-31",
+          "tc-32"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": [
+          "Identity & Login"
+        ],
+        "summary": "Valid Login",
+        "operationId": "post__login",
+        "description": "Explorer scenarios:\n\n- **03 Valid Login**: Expected: Valid credentials return sanitized identity only.\n- **04 Wrong Password**: Expected: Wrong password returns generic 401 credential error.\n- **05 Unknown Email**: Expected: Unknown email returns generic 401 credential error.\n- **06 Invalid Login Input**: Expected: Invalid login input returns controlled 400 validation error.\n- **14 Login With New Password**: Expected: Login succeeds with the new password after reset.\n- **49 Create Session**: Expected: Valid continuation creates session cookie.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [
+          "tc-03",
+          "tc-04",
+          "tc-05",
+          "tc-06",
+          "tc-14",
+          "tc-49"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "tc-03": {
+                  "summary": "03 Valid Login",
+                  "value": {
+                    "email": "{{userEmail}}",
+                    "password": "{{userPassword}}"
+                  }
+                },
+                "tc-04": {
+                  "summary": "04 Wrong Password",
+                  "value": {
+                    "email": "{{userEmail}}",
+                    "password": "{{wrongPassword}}"
+                  }
+                },
+                "tc-05": {
+                  "summary": "05 Unknown Email",
+                  "value": {
+                    "email": "{{unknownEmail}}",
+                    "password": "{{userPassword}}"
+                  }
+                },
+                "tc-06": {
+                  "summary": "06 Invalid Login Input",
+                  "value": {
+                    "email": "not-an-email",
+                    "password": ""
+                  }
+                },
+                "tc-14": {
+                  "summary": "14 Login With New Password",
+                  "value": {
+                    "email": "{{userEmail}}",
+                    "password": "{{newPassword}}"
+                  }
+                },
+                "tc-49": {
+                  "summary": "49 Create Session",
+                  "value": {
+                    "email": "{{userEmail}}",
+                    "password": "{{userPassword}}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/register": {
+      "post": {
+        "tags": [
+          "Identity & Login"
+        ],
+        "summary": "Create User",
+        "operationId": "post__register",
+        "description": "Explorer scenarios:\n\n- **01 Create User**: Expected: Create user returns 200/201 and safe user fields.\n- **02 Duplicate Email Rejected**: Expected: Duplicate email returns controlled 400/409 without internals.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "201": {
+            "description": "Created."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [
+          "tc-01",
+          "tc-02"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "tc-01": {
+                  "summary": "01 Create User",
+                  "value": {
+                    "email": "{{userEmail}}",
+                    "password": "{{userPassword}}",
+                    "name": "API Explorer User"
+                  }
+                },
+                "tc-02": {
+                  "summary": "02 Duplicate Email Rejected",
+                  "value": {
+                    "email": "{{userEmail}}",
+                    "password": "{{userPassword}}",
+                    "name": "Duplicate User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users/me": {
+      "get": {
+        "tags": [
+          "Account"
+        ],
+        "summary": "GET /api/v1/users/me",
+        "operationId": "get__api_v1_users_me",
+        "description": "Integrated backend endpoint.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [],
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ]
+      }
+    },
+    "/api/v1/users/me/profile": {
+      "patch": {
+        "tags": [
+          "Account"
+        ],
+        "summary": "PATCH /api/v1/users/me/profile",
+        "operationId": "patch__api_v1_users_me_profile",
+        "description": "Integrated backend endpoint.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [],
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "avatar_url": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "example": {
+                  "summary": "Example",
+                  "value": {
+                    "name": "eTroy User",
+                    "avatar_url": "https://example.com/avatar.png"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users/me/password": {
+      "post": {
+        "tags": [
+          "Account"
+        ],
+        "summary": "POST /api/v1/users/me/password",
+        "operationId": "post__api_v1_users_me_password",
+        "description": "Integrated backend endpoint.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [],
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "currentPassword": {
+                    "type": "string"
+                  },
+                  "newPassword": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "example": {
+                  "summary": "Example",
+                  "value": {
+                    "currentPassword": "{{userPassword}}",
+                    "newPassword": "{{newPassword}}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users/me/sessions": {
+      "delete": {
+        "tags": [
+          "Account"
+        ],
+        "summary": "DELETE /api/v1/users/me/sessions",
+        "operationId": "delete__api_v1_users_me_sessions",
+        "description": "Integrated backend endpoint.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [],
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ]
+      }
+    },
+    "/api/v1/users/me/connected-applications": {
+      "get": {
+        "tags": [
+          "Account"
+        ],
+        "summary": "GET /api/v1/users/me/connected-applications",
+        "operationId": "get__api_v1_users_me_connected_applications",
+        "description": "Integrated backend endpoint.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [],
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ]
+      }
+    },
+    "/api/v1/users/me/connected-applications/{clientId}/revoke": {
+      "post": {
+        "tags": [
+          "Account"
+        ],
+        "summary": "POST /api/v1/users/me/connected-applications/{clientId}/revoke",
+        "operationId": "post__api_v1_users_me_connected_applications_clientId_revoke",
+        "description": "Integrated backend endpoint.",
+        "parameters": [
+          {
+            "name": "clientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [],
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ]
+      }
+    },
+    "/verification/request": {
+      "post": {
+        "tags": [
+          "Verification & Reset"
+        ],
+        "summary": "Request Email Verification",
+        "operationId": "post__verification_request",
+        "description": "Explorer scenarios:\n\n- **07 Request Email Verification**: Expected: Request is accepted without exposing raw token or hash.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [
+          "tc-07"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "tc-07": {
+                  "summary": "07 Request Email Verification",
+                  "value": {
+                    "userId": "{{subject}}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/verification/confirm": {
+      "post": {
+        "tags": [
+          "Verification & Reset"
+        ],
+        "summary": "Confirm Email Verification",
+        "operationId": "post__verification_confirm",
+        "description": "Explorer scenarios:\n\n- **08 Confirm Email Verification**: Expected: Valid token confirms verification without exposing token data.\n- **09 Reuse Verification Token**: Expected: Reused verification token is rejected with controlled error.\n- **10 Expired Verification Token**: Expected: Expired verification token is rejected with controlled error.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [
+          "tc-08",
+          "tc-09",
+          "tc-10"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "tc-08": {
+                  "summary": "08 Confirm Email Verification",
+                  "value": {
+                    "token": "{{verificationToken}}"
+                  }
+                },
+                "tc-09": {
+                  "summary": "09 Reuse Verification Token",
+                  "value": {
+                    "token": "{{verificationToken}}"
+                  }
+                },
+                "tc-10": {
+                  "summary": "10 Expired Verification Token",
+                  "value": {
+                    "token": "{{expiredVerificationToken}}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/verify-email": {
+      "get": {
+        "tags": [
+          "OIDC & Account"
+        ],
+        "summary": "GET /verify-email",
+        "operationId": "get__verify_email",
+        "description": "Integrated backend endpoint.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "302": {
+            "description": "Redirect to interaction UI or registered client.",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": []
+      }
+    },
+    "/password-reset/request": {
+      "post": {
+        "tags": [
+          "Verification & Reset"
+        ],
+        "summary": "Request Password Reset",
+        "operationId": "post__password_reset_request",
+        "description": "Explorer scenarios:\n\n- **11 Request Password Reset**: Expected: Password reset request is accepted without exposing token data.\n- **12 Password Reset Unknown Email**: Expected: Unknown email behavior is non-revealing.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [
+          "tc-11",
+          "tc-12"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "tc-11": {
+                  "summary": "11 Request Password Reset",
+                  "value": {
+                    "email": "{{userEmail}}"
+                  }
+                },
+                "tc-12": {
+                  "summary": "12 Password Reset Unknown Email",
+                  "value": {
+                    "email": "{{unknownEmail}}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/password-reset/confirm": {
+      "post": {
+        "tags": [
+          "Verification & Reset"
+        ],
+        "summary": "Confirm Password Reset",
+        "operationId": "post__password_reset_confirm",
+        "description": "Explorer scenarios:\n\n- **13 Confirm Password Reset**: Expected: Valid reset token updates password without exposing token data.\n- **15 Reuse Password Reset Token**: Expected: Reused reset token is rejected.\n- **16 Expired Password Reset Token**: Expected: Expired reset token is rejected.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [
+          "tc-13",
+          "tc-15",
+          "tc-16"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string"
+                  },
+                  "newPassword": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "tc-13": {
+                  "summary": "13 Confirm Password Reset",
+                  "value": {
+                    "token": "{{passwordResetToken}}",
+                    "newPassword": "{{newPassword}}"
+                  }
+                },
+                "tc-15": {
+                  "summary": "15 Reuse Password Reset Token",
+                  "value": {
+                    "token": "{{passwordResetToken}}",
+                    "newPassword": "{{newPassword}}"
+                  }
+                },
+                "tc-16": {
+                  "summary": "16 Expired Password Reset Token",
+                  "value": {
+                    "token": "{{expiredPasswordResetToken}}",
+                    "newPassword": "{{newPassword}}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/users": {
+      "post": {
+        "tags": [
+          "Admin Users"
+        ],
+        "summary": "Audit Event Security Action",
+        "operationId": "post__admin_users",
+        "description": "Explorer scenarios:\n\n- **61 Audit Event Security Action**: Expected: Security-relevant admin action records audit event safely.\n- **62 Create Admin User**: Expected: Admin-provisioned user is created safely.\n- **63 Duplicate Admin User**: Expected: Duplicate admin-provisioned user is rejected.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "201": {
+            "description": "Created."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [
+          "tc-61",
+          "tc-62",
+          "tc-63"
+        ],
+        "security": [
+          {
+            "adminContext": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "email_verified": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "examples": {
+                "tc-61": {
+                  "summary": "61 Audit Event Security Action",
+                  "value": {
+                    "email": "{{adminUserEmail}}",
+                    "password": "{{userPassword}}",
+                    "name": "Audit User",
+                    "email_verified": true
+                  }
+                },
+                "tc-62": {
+                  "summary": "62 Create Admin User",
+                  "value": {
+                    "email": "{{adminUserEmail}}",
+                    "password": "{{userPassword}}",
+                    "name": "Admin User",
+                    "email_verified": true
+                  }
+                },
+                "tc-63": {
+                  "summary": "63 Duplicate Admin User",
+                  "value": {
+                    "email": "{{adminUserEmail}}",
+                    "password": "{{userPassword}}",
+                    "name": "Duplicate Admin User",
+                    "email_verified": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "GET /admin/users",
+        "operationId": "get__admin_users",
+        "description": "Integrated backend endpoint.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [],
+        "security": [
+          {
+            "adminContext": []
+          }
+        ]
+      }
+    },
+    "/admin/users/{sub}": {
+      "get": {
+        "tags": [
+          "Admin Users"
+        ],
+        "summary": "Get Admin User View",
+        "operationId": "get__admin_users_sub_",
+        "description": "Explorer scenarios:\n\n- **64 Get Admin User View**: Expected: Bounded admin user view is returned without sensitive fields.",
+        "parameters": [
+          {
+            "name": "sub",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [
+          "tc-64"
+        ],
+        "security": [
+          {
+            "adminContext": []
+          }
+        ]
+      }
+    },
+    "/admin/users/{sub}/disable": {
+      "post": {
+        "tags": [
+          "Admin Users"
+        ],
+        "summary": "Disable User",
+        "operationId": "post__admin_users_sub_disable",
+        "description": "Explorer scenarios:\n\n- **65 Disable User**: Expected: User is disabled safely without exposing sensitive fields.",
+        "parameters": [
+          {
+            "name": "sub",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [
+          "tc-65"
+        ],
+        "security": [
+          {
+            "adminContext": []
+          }
+        ]
+      }
+    },
+    "/admin/users/{sub}/enable": {
+      "post": {
+        "tags": [
+          "Admin Users"
+        ],
+        "summary": "Enable User",
+        "operationId": "post__admin_users_sub_enable",
+        "description": "Explorer scenarios:\n\n- **66 Enable User**: Expected: User is enabled safely without exposing sensitive fields.",
+        "parameters": [
+          {
+            "name": "sub",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [
+          "tc-66"
+        ],
+        "security": [
+          {
+            "adminContext": []
+          }
+        ]
+      }
+    },
+    "/admin/users/{sub}/profile": {
+      "patch": {
+        "tags": [
+          "Admin Users"
+        ],
+        "summary": "Update Controlled Profile",
+        "operationId": "patch__admin_users_sub_profile",
+        "description": "Explorer scenarios:\n\n- **67 Update Controlled Profile**: Expected: Only approved profile fields are updated.\n- **68 Reject Forbidden Profile Mutation**: Expected: Forbidden user fields are rejected.",
+        "parameters": [
+          {
+            "name": "sub",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [
+          "tc-67",
+          "tc-68"
+        ],
+        "security": [
+          {
+            "adminContext": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "avatar_url": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "password_hash": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "tc-67": {
+                  "summary": "67 Update Controlled Profile",
+                  "value": {
+                    "name": "Updated API Explorer User",
+                    "avatar_url": "https://example.com/avatar.png"
+                  }
+                },
+                "tc-68": {
+                  "summary": "68 Reject Forbidden Profile Mutation",
+                  "value": {
+                    "email": "changed@example.com",
+                    "password_hash": "forbidden"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/users/{sub}/email-verification/mark-verified": {
+      "post": {
+        "tags": [
+          "Admin Users"
+        ],
+        "summary": "Mark Email Verified",
+        "operationId": "post__admin_users_sub_email_verification_mark_verified",
+        "description": "Explorer scenarios:\n\n- **69 Mark Email Verified**: Expected: Admin override marks email as verified safely.",
+        "parameters": [
+          {
+            "name": "sub",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [
+          "tc-69"
+        ],
+        "security": [
+          {
+            "adminContext": []
+          }
+        ]
+      }
+    },
+    "/admin/audit-logs": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "GET /admin/audit-logs",
+        "operationId": "get__admin_audit_logs",
+        "description": "Integrated backend endpoint.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [],
+        "security": [
+          {
+            "adminContext": []
+          }
+        ]
+      }
+    },
+    "/admin/sessions": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "GET /admin/sessions",
+        "operationId": "get__admin_sessions",
+        "description": "Integrated backend endpoint.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [],
+        "security": [
+          {
+            "adminContext": []
+          }
+        ]
+      }
+    },
+    "/admin/maintenance/purge-unverified-users": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "POST /admin/maintenance/purge-unverified-users",
+        "operationId": "post__admin_maintenance_purge_unverified_users",
+        "description": "Integrated backend endpoint.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [],
+        "security": [
+          {
+            "adminContext": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "dryRun": {
+                    "type": "boolean"
+                  },
+                  "olderThanDays": {
+                    "type": "number"
+                  }
+                }
+              },
+              "examples": {
+                "example": {
+                  "summary": "Example",
+                  "value": {
+                    "dryRun": true,
+                    "olderThanDays": 30
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/clients": {
+      "post": {
+        "tags": [
+          "Admin Clients"
+        ],
+        "summary": "Create OIDC Client",
+        "operationId": "post__admin_clients",
+        "description": "Explorer scenarios:\n\n- **70 Create OIDC Client**: Expected: Client is created and one-time raw secret is returned without hash exposure.\n- **71 Reject Client Secret Fields**: Expected: Supplied client id, secret, or secret hash is rejected.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "201": {
+            "description": "Created."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [
+          "tc-70",
+          "tc-71"
+        ],
+        "security": [
+          {
+            "adminContext": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "redirectUris": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "postLogoutRedirectUris": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "allowedScopes": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "grantTypes": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "responseTypes": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "clientId": {
+                    "type": "string"
+                  },
+                  "clientSecret": {
+                    "type": "string"
+                  },
+                  "clientSecretHash": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "tc-70": {
+                  "summary": "70 Create OIDC Client",
+                  "value": {
+                    "name": "API Explorer Client",
+                    "redirectUris": [
+                      "{{redirectUri}}"
+                    ],
+                    "postLogoutRedirectUris": [
+                      "{{postLogoutRedirectUri}}"
+                    ],
+                    "allowedScopes": [
+                      "openid",
+                      "profile",
+                      "email",
+                      "offline_access"
+                    ],
+                    "grantTypes": [
+                      "authorization_code",
+                      "refresh_token"
+                    ],
+                    "responseTypes": [
+                      "code"
+                    ]
+                  }
+                },
+                "tc-71": {
+                  "summary": "71 Reject Client Secret Fields",
+                  "value": {
+                    "name": "API Explorer Client",
+                    "redirectUris": [
+                      "{{redirectUri}}"
+                    ],
+                    "postLogoutRedirectUris": [
+                      "{{postLogoutRedirectUri}}"
+                    ],
+                    "allowedScopes": [
+                      "openid",
+                      "profile",
+                      "email",
+                      "offline_access"
+                    ],
+                    "grantTypes": [
+                      "authorization_code",
+                      "refresh_token"
+                    ],
+                    "responseTypes": [
+                      "code"
+                    ],
+                    "clientId": "{{clientId}}",
+                    "clientSecret": "forbidden",
+                    "clientSecretHash": "forbidden"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Admin Clients"
+        ],
+        "summary": "List Clients",
+        "operationId": "get__admin_clients",
+        "description": "Explorer scenarios:\n\n- **73 List Clients**: Expected: Client list does not expose secrets.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [
+          "tc-73"
+        ],
+        "security": [
+          {
+            "adminContext": []
+          }
+        ]
+      }
+    },
+    "/admin/clients/{clientId}": {
+      "get": {
+        "tags": [
+          "Admin Clients"
+        ],
+        "summary": "Get Client",
+        "operationId": "get__admin_clients_clientId_",
+        "description": "Explorer scenarios:\n\n- **72 Get Client**: Expected: Client metadata is returned without raw secret or secret hash.",
+        "parameters": [
+          {
+            "name": "clientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [
+          "tc-72"
+        ],
+        "security": [
+          {
+            "adminContext": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Admin Clients"
+        ],
+        "summary": "Update Client Metadata",
+        "operationId": "patch__admin_clients_clientId_",
+        "description": "Explorer scenarios:\n\n- **74 Update Client Metadata**: Expected: Controlled mutable client metadata can be updated.\n- **75 Reject Forbidden Client Update**: Expected: Forbidden client metadata mutation is rejected.\n- **76 Reject Wildcard Redirect URI**: Expected: Wildcard redirect URI is rejected.\n- **78 Reject Unknown Grant Type**: Expected: Unknown grant type is rejected.",
+        "parameters": [
+          {
+            "name": "clientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [
+          "tc-74",
+          "tc-75",
+          "tc-76",
+          "tc-78"
+        ],
+        "security": [
+          {
+            "adminContext": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "redirectUris": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "postLogoutRedirectUris": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "allowedScopes": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "grantTypes": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "responseTypes": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "clientId": {
+                    "type": "string"
+                  },
+                  "clientSecret": {
+                    "type": "string"
+                  },
+                  "clientSecretHash": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "tc-74": {
+                  "summary": "74 Update Client Metadata",
+                  "value": {
+                    "name": "API Explorer Client Updated",
+                    "redirectUris": [
+                      "{{redirectUri}}"
+                    ],
+                    "postLogoutRedirectUris": [
+                      "{{postLogoutRedirectUri}}"
+                    ],
+                    "allowedScopes": [
+                      "openid",
+                      "profile",
+                      "email",
+                      "offline_access"
+                    ],
+                    "grantTypes": [
+                      "authorization_code",
+                      "refresh_token"
+                    ],
+                    "responseTypes": [
+                      "code"
+                    ]
+                  }
+                },
+                "tc-75": {
+                  "summary": "75 Reject Forbidden Client Update",
+                  "value": {
+                    "clientId": "{{invalidClientId}}",
+                    "clientSecret": "forbidden",
+                    "clientSecretHash": "forbidden"
+                  }
+                },
+                "tc-76": {
+                  "summary": "76 Reject Wildcard Redirect URI",
+                  "value": {
+                    "redirectUris": [
+                      "https://*.example.com/callback"
+                    ]
+                  }
+                },
+                "tc-78": {
+                  "summary": "78 Reject Unknown Grant Type",
+                  "value": {
+                    "grantTypes": [
+                      "authorization_code",
+                      "unknown_grant"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/clients/{clientId}/disable": {
+      "post": {
+        "tags": [
+          "Admin Clients"
+        ],
+        "summary": "Disable Client",
+        "operationId": "post__admin_clients_clientId_disable",
+        "description": "Explorer scenarios:\n\n- **80 Disable Client**: Expected: Client is disabled and no longer validates as active.",
+        "parameters": [
+          {
+            "name": "clientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [
+          "tc-80"
+        ],
+        "security": [
+          {
+            "adminContext": []
+          }
+        ]
+      }
+    },
+    "/admin/clients/{clientId}/rotate-secret": {
+      "post": {
+        "tags": [
+          "Admin Clients"
+        ],
+        "summary": "Rotate Client Secret",
+        "operationId": "post__admin_clients_clientId_rotate_secret",
+        "description": "Explorer scenarios:\n\n- **79 Rotate Client Secret**: Expected: New raw client secret is returned once without exposing hash.",
+        "parameters": [
+          {
+            "name": "clientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [
+          "tc-79"
+        ],
+        "security": [
+          {
+            "adminContext": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "adminContext": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-admin-sub",
+        "description": "Upstream administrative actor context; not proof of authorization."
+      },
+      "sessionCookie": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "etroy_oidc_sid",
+        "description": "Established by POST /login; browser sends automatically. Swagger cannot set HttpOnly cookies manually."
+      }
+    }
+  }
+}
