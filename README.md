@@ -13,7 +13,7 @@ docker compose up --build
 - OpenAPI: http://localhost:3000/openapi.json
 - Mailpit inbox: http://localhost:8025
 
-Compose provides MongoDB, Redis and a local SMTP inbox. It binds host ports to loopback and uses development cookies for local HTTP. Signing keys are generated on first startup and persisted in MongoDB. This configuration is for local development.
+Compose provides MongoDB 7.0, Redis and a local SMTP inbox. It binds host ports to loopback and uses development cookies for local HTTP. Signing keys are generated on first startup and persisted in MongoDB. This configuration is for local development. MongoDB 7.0 avoids the current [MongoDB 8.x startup issue on newer Ubuntu kernels](https://jira.mongodb.org/browse/SERVER-136848).
 
 ## Run with Node.js
 
