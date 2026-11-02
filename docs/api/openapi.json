@@ -3,7 +3,7 @@
   "info": {
     "title": "eTroy One API",
     "version": "1.0.0",
-    "description": "OIDC provider, identity lifecycle and administration. The 87 original API Explorer scenarios are preserved as named examples and x-explorer-cases. Replace {{placeholders}} before executing requests. Browser login establishes the same-origin session cookie; copy the etroy_oidc_csrf cookie value to x-oidc-csrf-token for logout. Admin context is inherited from upstream and is not a complete authorization mechanism. Do not expose this development configuration publicly."
+    "description": "OIDC provider, identity lifecycle and administration. The 87 original API Explorer scenarios are preserved as named examples and x-explorer-cases. Replace {{placeholders}} before executing requests. Browser login establishes the same-origin session cookie; copy the etroy_oidc_csrf cookie value to x-oidc-csrf-token for logout. Administrative API operations require a logged-in session with a persisted admin role. Client actor headers do not grant access. Do not expose this development configuration publicly."
   },
   "servers": [
     {
@@ -1543,13 +1543,125 @@
         }
       }
     },
-    "/api/v1/users/me": {
+    "/api/v1/admin/login": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "POST /api/v1/admin/login",
+        "operationId": "post__api_v1_admin_login",
+        "description": "Integrated backend endpoint.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "example": {
+                  "summary": "Example",
+                  "value": {
+                    "email": "admin@troy.edu",
+                    "password": "{{userPassword}}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/user/login": {
+      "post": {
+        "tags": [
+          "Account"
+        ],
+        "summary": "POST /api/v1/user/login",
+        "operationId": "post__api_v1_user_login",
+        "description": "Integrated backend endpoint.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response (endpoint-specific JSON or text)."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Missing or invalid credentials/session."
+          },
+          "403": {
+            "description": "Operation denied."
+          },
+          "500": {
+            "description": "Server error."
+          }
+        },
+        "x-explorer-cases": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "example": {
+                  "summary": "Example",
+                  "value": {
+                    "email": "{{userEmail}}",
+                    "password": "{{userPassword}}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/user/me": {
       "get": {
         "tags": [
           "Account"
         ],
-        "summary": "GET /api/v1/users/me",
-        "operationId": "get__api_v1_users_me",
+        "summary": "GET /api/v1/user/me",
+        "operationId": "get__api_v1_user_me",
         "description": "Integrated backend endpoint.",
         "parameters": [],
         "responses": {
@@ -1577,13 +1689,13 @@
         ]
       }
     },
-    "/api/v1/users/me/profile": {
+    "/api/v1/user/me/profile": {
       "patch": {
         "tags": [
           "Account"
         ],
-        "summary": "PATCH /api/v1/users/me/profile",
-        "operationId": "patch__api_v1_users_me_profile",
+        "summary": "PATCH /api/v1/user/me/profile",
+        "operationId": "patch__api_v1_user_me_profile",
         "description": "Integrated backend endpoint.",
         "parameters": [],
         "responses": {
@@ -1638,13 +1750,13 @@
         }
       }
     },
-    "/api/v1/users/me/password": {
+    "/api/v1/user/me/password": {
       "post": {
         "tags": [
           "Account"
         ],
-        "summary": "POST /api/v1/users/me/password",
-        "operationId": "post__api_v1_users_me_password",
+        "summary": "POST /api/v1/user/me/password",
+        "operationId": "post__api_v1_user_me_password",
         "description": "Integrated backend endpoint.",
         "parameters": [],
         "responses": {
@@ -1699,13 +1811,13 @@
         }
       }
     },
-    "/api/v1/users/me/sessions": {
+    "/api/v1/user/me/sessions": {
       "delete": {
         "tags": [
           "Account"
         ],
-        "summary": "DELETE /api/v1/users/me/sessions",
-        "operationId": "delete__api_v1_users_me_sessions",
+        "summary": "DELETE /api/v1/user/me/sessions",
+        "operationId": "delete__api_v1_user_me_sessions",
         "description": "Integrated backend endpoint.",
         "parameters": [],
         "responses": {
@@ -1733,13 +1845,13 @@
         ]
       }
     },
-    "/api/v1/users/me/connected-applications": {
+    "/api/v1/user/me/connected-applications": {
       "get": {
         "tags": [
           "Account"
         ],
-        "summary": "GET /api/v1/users/me/connected-applications",
-        "operationId": "get__api_v1_users_me_connected_applications",
+        "summary": "GET /api/v1/user/me/connected-applications",
+        "operationId": "get__api_v1_user_me_connected_applications",
         "description": "Integrated backend endpoint.",
         "parameters": [],
         "responses": {
@@ -1767,13 +1879,13 @@
         ]
       }
     },
-    "/api/v1/users/me/connected-applications/{clientId}/revoke": {
+    "/api/v1/user/me/connected-applications/{clientId}/revoke": {
       "post": {
         "tags": [
           "Account"
         ],
-        "summary": "POST /api/v1/users/me/connected-applications/{clientId}/revoke",
-        "operationId": "post__api_v1_users_me_connected_applications_clientId_revoke",
+        "summary": "POST /api/v1/user/me/connected-applications/{clientId}/revoke",
+        "operationId": "post__api_v1_user_me_connected_applications_clientId_revoke",
         "description": "Integrated backend endpoint.",
         "parameters": [
           {
@@ -2106,13 +2218,13 @@
         }
       }
     },
-    "/admin/users": {
+    "/api/v1/admin/users": {
       "post": {
         "tags": [
           "Admin Users"
         ],
         "summary": "Audit Event Security Action",
-        "operationId": "post__admin_users",
+        "operationId": "post__api_v1_admin_users",
         "description": "Explorer scenarios:\n\n- **61 Audit Event Security Action**: Expected: Security-relevant admin action records audit event safely.\n- **62 Create Admin User**: Expected: Admin-provisioned user is created safely.\n- **63 Duplicate Admin User**: Expected: Duplicate admin-provisioned user is rejected.",
         "parameters": [],
         "responses": {
@@ -2142,7 +2254,7 @@
         ],
         "security": [
           {
-            "adminContext": []
+            "sessionCookie": []
           }
         ],
         "requestBody": {
@@ -2203,8 +2315,8 @@
         "tags": [
           "Admin"
         ],
-        "summary": "GET /admin/users",
-        "operationId": "get__admin_users",
+        "summary": "GET /api/v1/admin/users",
+        "operationId": "get__api_v1_admin_users",
         "description": "Integrated backend endpoint.",
         "parameters": [],
         "responses": {
@@ -2227,18 +2339,18 @@
         "x-explorer-cases": [],
         "security": [
           {
-            "adminContext": []
+            "sessionCookie": []
           }
         ]
       }
     },
-    "/admin/users/{sub}": {
+    "/api/v1/admin/users/{sub}": {
       "get": {
         "tags": [
           "Admin Users"
         ],
         "summary": "Get Admin User View",
-        "operationId": "get__admin_users_sub_",
+        "operationId": "get__api_v1_admin_users_sub_",
         "description": "Explorer scenarios:\n\n- **64 Get Admin User View**: Expected: Bounded admin user view is returned without sensitive fields.",
         "parameters": [
           {
@@ -2272,18 +2384,18 @@
         ],
         "security": [
           {
-            "adminContext": []
+            "sessionCookie": []
           }
         ]
       }
     },
-    "/admin/users/{sub}/disable": {
+    "/api/v1/admin/users/{sub}/disable": {
       "post": {
         "tags": [
           "Admin Users"
         ],
         "summary": "Disable User",
-        "operationId": "post__admin_users_sub_disable",
+        "operationId": "post__api_v1_admin_users_sub_disable",
         "description": "Explorer scenarios:\n\n- **65 Disable User**: Expected: User is disabled safely without exposing sensitive fields.",
         "parameters": [
           {
@@ -2317,18 +2429,18 @@
         ],
         "security": [
           {
-            "adminContext": []
+            "sessionCookie": []
           }
         ]
       }
     },
-    "/admin/users/{sub}/enable": {
+    "/api/v1/admin/users/{sub}/enable": {
       "post": {
         "tags": [
           "Admin Users"
         ],
         "summary": "Enable User",
-        "operationId": "post__admin_users_sub_enable",
+        "operationId": "post__api_v1_admin_users_sub_enable",
         "description": "Explorer scenarios:\n\n- **66 Enable User**: Expected: User is enabled safely without exposing sensitive fields.",
         "parameters": [
           {
@@ -2362,18 +2474,18 @@
         ],
         "security": [
           {
-            "adminContext": []
+            "sessionCookie": []
           }
         ]
       }
     },
-    "/admin/users/{sub}/profile": {
+    "/api/v1/admin/users/{sub}/profile": {
       "patch": {
         "tags": [
           "Admin Users"
         ],
         "summary": "Update Controlled Profile",
-        "operationId": "patch__admin_users_sub_profile",
+        "operationId": "patch__api_v1_admin_users_sub_profile",
         "description": "Explorer scenarios:\n\n- **67 Update Controlled Profile**: Expected: Only approved profile fields are updated.\n- **68 Reject Forbidden Profile Mutation**: Expected: Forbidden user fields are rejected.",
         "parameters": [
           {
@@ -2408,7 +2520,7 @@
         ],
         "security": [
           {
-            "adminContext": []
+            "sessionCookie": []
           }
         ],
         "requestBody": {
@@ -2453,13 +2565,13 @@
         }
       }
     },
-    "/admin/users/{sub}/email-verification/mark-verified": {
+    "/api/v1/admin/users/{sub}/email-verification/mark-verified": {
       "post": {
         "tags": [
           "Admin Users"
         ],
         "summary": "Mark Email Verified",
-        "operationId": "post__admin_users_sub_email_verification_mark_verified",
+        "operationId": "post__api_v1_admin_users_sub_email_verification_mark_verified",
         "description": "Explorer scenarios:\n\n- **69 Mark Email Verified**: Expected: Admin override marks email as verified safely.",
         "parameters": [
           {
@@ -2493,18 +2605,18 @@
         ],
         "security": [
           {
-            "adminContext": []
+            "sessionCookie": []
           }
         ]
       }
     },
-    "/admin/audit-logs": {
+    "/api/v1/admin/audit-logs": {
       "get": {
         "tags": [
           "Admin"
         ],
-        "summary": "GET /admin/audit-logs",
-        "operationId": "get__admin_audit_logs",
+        "summary": "GET /api/v1/admin/audit-logs",
+        "operationId": "get__api_v1_admin_audit_logs",
         "description": "Integrated backend endpoint.",
         "parameters": [],
         "responses": {
@@ -2527,18 +2639,18 @@
         "x-explorer-cases": [],
         "security": [
           {
-            "adminContext": []
+            "sessionCookie": []
           }
         ]
       }
     },
-    "/admin/sessions": {
+    "/api/v1/admin/sessions": {
       "get": {
         "tags": [
           "Admin"
         ],
-        "summary": "GET /admin/sessions",
-        "operationId": "get__admin_sessions",
+        "summary": "GET /api/v1/admin/sessions",
+        "operationId": "get__api_v1_admin_sessions",
         "description": "Integrated backend endpoint.",
         "parameters": [],
         "responses": {
@@ -2561,18 +2673,18 @@
         "x-explorer-cases": [],
         "security": [
           {
-            "adminContext": []
+            "sessionCookie": []
           }
         ]
       }
     },
-    "/admin/maintenance/purge-unverified-users": {
+    "/api/v1/admin/maintenance/purge-unverified-users": {
       "post": {
         "tags": [
           "Admin"
         ],
-        "summary": "POST /admin/maintenance/purge-unverified-users",
-        "operationId": "post__admin_maintenance_purge_unverified_users",
+        "summary": "POST /api/v1/admin/maintenance/purge-unverified-users",
+        "operationId": "post__api_v1_admin_maintenance_purge_unverified_users",
         "description": "Integrated backend endpoint.",
         "parameters": [],
         "responses": {
@@ -2595,7 +2707,7 @@
         "x-explorer-cases": [],
         "security": [
           {
-            "adminContext": []
+            "sessionCookie": []
           }
         ],
         "requestBody": {
@@ -2627,13 +2739,13 @@
         }
       }
     },
-    "/admin/clients": {
+    "/api/v1/admin/clients": {
       "post": {
         "tags": [
           "Admin Clients"
         ],
         "summary": "Create OIDC Client",
-        "operationId": "post__admin_clients",
+        "operationId": "post__api_v1_admin_clients",
         "description": "Explorer scenarios:\n\n- **70 Create OIDC Client**: Expected: Client is created and one-time raw secret is returned without hash exposure.\n- **71 Reject Client Secret Fields**: Expected: Supplied client id, secret, or secret hash is rejected.",
         "parameters": [],
         "responses": {
@@ -2662,7 +2774,7 @@
         ],
         "security": [
           {
-            "adminContext": []
+            "sessionCookie": []
           }
         ],
         "requestBody": {
@@ -2780,7 +2892,7 @@
           "Admin Clients"
         ],
         "summary": "List Clients",
-        "operationId": "get__admin_clients",
+        "operationId": "get__api_v1_admin_clients",
         "description": "Explorer scenarios:\n\n- **73 List Clients**: Expected: Client list does not expose secrets.",
         "parameters": [],
         "responses": {
@@ -2805,18 +2917,18 @@
         ],
         "security": [
           {
-            "adminContext": []
+            "sessionCookie": []
           }
         ]
       }
     },
-    "/admin/clients/{clientId}": {
+    "/api/v1/admin/clients/{clientId}": {
       "get": {
         "tags": [
           "Admin Clients"
         ],
         "summary": "Get Client",
-        "operationId": "get__admin_clients_clientId_",
+        "operationId": "get__api_v1_admin_clients_clientId_",
         "description": "Explorer scenarios:\n\n- **72 Get Client**: Expected: Client metadata is returned without raw secret or secret hash.",
         "parameters": [
           {
@@ -2850,7 +2962,7 @@
         ],
         "security": [
           {
-            "adminContext": []
+            "sessionCookie": []
           }
         ]
       },
@@ -2859,7 +2971,7 @@
           "Admin Clients"
         ],
         "summary": "Update Client Metadata",
-        "operationId": "patch__admin_clients_clientId_",
+        "operationId": "patch__api_v1_admin_clients_clientId_",
         "description": "Explorer scenarios:\n\n- **74 Update Client Metadata**: Expected: Controlled mutable client metadata can be updated.\n- **75 Reject Forbidden Client Update**: Expected: Forbidden client metadata mutation is rejected.\n- **76 Reject Wildcard Redirect URI**: Expected: Wildcard redirect URI is rejected.\n- **78 Reject Unknown Grant Type**: Expected: Unknown grant type is rejected.",
         "parameters": [
           {
@@ -2896,7 +3008,7 @@
         ],
         "security": [
           {
-            "adminContext": []
+            "sessionCookie": []
           }
         ],
         "requestBody": {
@@ -3007,13 +3119,13 @@
         }
       }
     },
-    "/admin/clients/{clientId}/disable": {
+    "/api/v1/admin/clients/{clientId}/disable": {
       "post": {
         "tags": [
           "Admin Clients"
         ],
         "summary": "Disable Client",
-        "operationId": "post__admin_clients_clientId_disable",
+        "operationId": "post__api_v1_admin_clients_clientId_disable",
         "description": "Explorer scenarios:\n\n- **80 Disable Client**: Expected: Client is disabled and no longer validates as active.",
         "parameters": [
           {
@@ -3047,18 +3159,18 @@
         ],
         "security": [
           {
-            "adminContext": []
+            "sessionCookie": []
           }
         ]
       }
     },
-    "/admin/clients/{clientId}/rotate-secret": {
+    "/api/v1/admin/clients/{clientId}/rotate-secret": {
       "post": {
         "tags": [
           "Admin Clients"
         ],
         "summary": "Rotate Client Secret",
-        "operationId": "post__admin_clients_clientId_rotate_secret",
+        "operationId": "post__api_v1_admin_clients_clientId_rotate_secret",
         "description": "Explorer scenarios:\n\n- **79 Rotate Client Secret**: Expected: New raw client secret is returned once without exposing hash.",
         "parameters": [
           {
@@ -3092,7 +3204,7 @@
         ],
         "security": [
           {
-            "adminContext": []
+            "sessionCookie": []
           }
         ]
       }
@@ -3104,12 +3216,6 @@
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT"
-      },
-      "adminContext": {
-        "type": "apiKey",
-        "in": "header",
-        "name": "x-admin-sub",
-        "description": "Upstream administrative actor context; not proof of authorization."
       },
       "sessionCookie": {
         "type": "apiKey",

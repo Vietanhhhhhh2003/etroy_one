@@ -37,12 +37,12 @@ const ForgotPasswordPage: React.FC = () => {
       {success ? (
         <div style={{ textAlign: 'center' }}>
           <Alert type="success" message="If an account exists with this email, a reset link has been sent." />
-          <Link to="/login" style={{ 
-            display: 'inline-block', 
-            marginTop: 'var(--spacing-md)', 
-            color: 'var(--color-primary)', 
-            fontWeight: 700, 
-            textDecoration: 'underline' 
+          <Link to="/user/login" style={{
+            display: 'inline-block',
+            marginTop: 'var(--spacing-md)',
+            color: 'var(--color-primary)',
+            fontWeight: 700,
+            textDecoration: 'underline'
           }}>
             Return to sign in
           </Link>
@@ -50,7 +50,7 @@ const ForgotPasswordPage: React.FC = () => {
       ) : (
         <form onSubmit={handleSubmit}>
           {error && <Alert type="error" message={error} />}
-          
+
           <Input
             label="Email Address"
             type="email"
@@ -60,13 +60,13 @@ const ForgotPasswordPage: React.FC = () => {
             autoComplete="email"
             placeholder="name@example.com"
           />
-          
+
           <Button type="submit" isLoading={isLoading}>
             Send reset link
           </Button>
-          
+
           <div style={{ marginTop: 'var(--spacing-lg)', textAlign: 'center', fontSize: '1rem', color: '#000000' }}>
-            <Link to="/login" style={{ color: 'var(--color-primary)', fontWeight: 700, textDecoration: 'underline' }}>Return to sign in</Link>
+            <Link to="/user/login" style={{ color: 'var(--color-primary)', fontWeight: 700, textDecoration: 'underline' }}>Return to sign in</Link>
           </div>
         </form>
       )}

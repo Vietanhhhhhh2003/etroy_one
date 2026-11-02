@@ -8,6 +8,7 @@ export interface UserDocument {
   password_hash: string;
   email_verified: boolean;
   status: UserStatus;
+  roles: UserRole[];
   name?: string;
   avatar_url?: string;
   createdAt: Date;
@@ -17,6 +18,8 @@ export interface UserDocument {
 export const USER_STATUSES = ['active', 'disabled'] as const;
 
 export type UserStatus = (typeof USER_STATUSES)[number];
+export const USER_ROLES = ['user', 'admin'] as const;
+export type UserRole = (typeof USER_ROLES)[number];
 
 const userSchema = new Schema<UserDocument>(
   {
@@ -47,6 +50,7 @@ const userSchema = new Schema<UserDocument>(
       required: true,
       default: 'active',
     },
+    roles: { type: [String], enum: [...USER_ROLES], default: ['user'], required: true },
     name: {
       type: String,
       trim: true,

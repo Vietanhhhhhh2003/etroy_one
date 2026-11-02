@@ -7,6 +7,7 @@ export interface UserProfile {
   status: UserStatus;
   name?: string;
   avatar_url?: string;
+  roles: ('user' | 'admin')[];
   isAdmin: boolean;
 }
 

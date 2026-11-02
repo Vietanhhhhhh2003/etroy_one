@@ -23,8 +23,8 @@ const App: React.FC = () => {
     setIsHelpOpen(false);
   };
 
-  const isProfile = pathname === '/';
-  const isAdmin = pathname.startsWith('/admin');
+  const isProfile = pathname === '/user/profile';
+  const isAdmin = pathname.startsWith('/admin') && pathname !== '/admin/login';
   
   return (
     <div className={`app-shell ${isAdmin ? 'admin-mode' : ''}`} onClick={() => isHelpOpen && setIsHelpOpen(false)}>

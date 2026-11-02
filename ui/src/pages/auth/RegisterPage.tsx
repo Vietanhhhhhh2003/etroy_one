@@ -178,7 +178,7 @@ const RegisterPage: React.FC = () => {
       </form>
       
       <div style={{ marginTop: '2.5rem', textAlign: 'center' }}>
-        <Link to="/login" style={{ fontSize: '0.875rem', color: 'var(--color-primary)', fontWeight: 700 }}>
+        <Link to="/user/login" style={{ fontSize: '0.875rem', color: 'var(--color-primary)', fontWeight: 700 }}>
           Back to sign in
         </Link>
       </div>

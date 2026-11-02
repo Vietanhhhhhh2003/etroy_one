@@ -38,18 +38,18 @@ const ResendVerificationPage: React.FC = () => {
   };
 
   return (
-    <Card 
-      title="Resend verification email" 
+    <Card
+      title="Resend verification email"
       subtitle="Enter your email address and we will send a new verification link if the account exists and is eligible."
     >
       {success ? (
         <div style={{ textAlign: 'center' }}>
-          <Alert 
-            type="success" 
-            message="If the account exists and is eligible, a verification link will be sent to your email address." 
+          <Alert
+            type="success"
+            message="If the account exists and is eligible, a verification link will be sent to your email address."
           />
-          <Link to="/login" style={{ 
-            display: 'inline-block', 
+          <Link to="/user/login" style={{
+            display: 'inline-block',
             marginTop: 'var(--spacing-lg)',
             color: 'var(--color-primary)',
             fontWeight: 700,
@@ -61,7 +61,7 @@ const ResendVerificationPage: React.FC = () => {
       ) : (
         <form onSubmit={handleSubmit}>
           {error && <Alert type="error" message={error} />}
-          
+
           <Input
             label="Email"
             type="email"
@@ -71,13 +71,13 @@ const ResendVerificationPage: React.FC = () => {
             placeholder="name@example.com"
             disabled={isLoading}
           />
-          
+
           <Button type="submit" isLoading={isLoading} disabled={isLoading}>
             Send verification link
           </Button>
-          
+
           <div style={{ marginTop: 'var(--spacing-lg)', textAlign: 'center' }}>
-            <Link to="/login" style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+            <Link to="/user/login" style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
               Remembered your password? Back to sign in
             </Link>
           </div>

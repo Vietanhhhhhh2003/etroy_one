@@ -1,3 +1,5 @@
+import { Navigate } from 'react-router-dom';
+import SessionGuard from '../shared/components/SessionGuard';
 import { createBrowserRouter } from 'react-router-dom';
 import LoginPage from '../pages/auth/LoginPage';
 import RegisterPage from '../pages/auth/RegisterPage';
@@ -24,9 +26,17 @@ import AdminObservabilityPage from '../pages/admin/AdminObservabilityPage';
 import AdminKeysPage from '../pages/admin/AdminKeysPage';
 
 export const router = createBrowserRouter([
+  { path: '/login', element: <Navigate to="/user/login" replace /> },
+  { path: '/user/login', element: <LoginPage audience="user" /> },
+  { path: '/admin/login', element: <LoginPage audience="admin" /> },
+  { path: '/user', element: <Navigate to="/user/profile" replace /> },
   {
-    path: '/login',
-    element: <LoginPage />,
+    path: '/user/profile',
+    element: (
+      <SessionGuard>
+        <ProfilePage />
+      </SessionGuard>
+    ),
   },
   {
     path: '/oidc/login',
@@ -82,7 +92,7 @@ export const router = createBrowserRouter([
   },
   {
     path: '/',
-    element: <ProfilePage />,
+    element: <SessionGuard home />,
   },
   {
     path: '/admin',

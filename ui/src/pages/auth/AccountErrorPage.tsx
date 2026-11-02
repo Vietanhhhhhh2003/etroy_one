@@ -27,7 +27,7 @@ const AccountErrorPage: React.FC = () => {
       )}
 
       <div style={{ textAlign: 'center' }}>
-        <Link to="/login" style={{ fontSize: '0.875rem' }}>
+        <Link to="/user/login" style={{ fontSize: '0.875rem' }}>
           Back to Sign In
         </Link>
       </div>

@@ -1,6 +1,7 @@
 import express, { type Express, type NextFunction, type Request, type Response } from 'express';
 import cors from 'cors';
 import { mountPresentation } from './presentation.js';
+import { requireRole } from './middlewares/authorization.middleware.js';
 
 import { config } from '../config/config.js';
 import { logger } from '../infrastructure/logger/index.js';
@@ -45,6 +46,7 @@ import {
   requestPasswordResetHandler,
 } from '../modules/password-reset/password-reset.controller.js';
 import {
+  adminLoginHandler,
   authorizeDecisionHandler,
   authorizeHandler,
   authorizeInteractionHandler,
@@ -100,13 +102,17 @@ export const createServer = (): Express => {
   app.get('/userinfo', userInfoHandler);
   app.post('/login', internalLoginHandler);
   app.post('/register', registerUserHandler);
-  app.get('/api/v1/users/me', getCurrentUserHandler);
-  app.patch('/api/v1/users/me/profile', updateCurrentProfileHandler);
-  app.post('/api/v1/users/me/password', changeCurrentPasswordHandler);
-  app.delete('/api/v1/users/me/sessions', signOutFromAllSessionsHandler);
-  app.get('/api/v1/users/me/connected-applications', listConnectedApplicationsHandler);
+  app.post('/api/v1/admin/login', adminLoginHandler);
+  app.post('/api/v1/user/login', internalLoginHandler);
+  app.use('/api/v1/admin', requireRole('admin'));
+  app.use('/api/v1/user', requireRole('user'));
+  app.get('/api/v1/user/me', getCurrentUserHandler);
+  app.patch('/api/v1/user/me/profile', updateCurrentProfileHandler);
+  app.post('/api/v1/user/me/password', changeCurrentPasswordHandler);
+  app.delete('/api/v1/user/me/sessions', signOutFromAllSessionsHandler);
+  app.get('/api/v1/user/me/connected-applications', listConnectedApplicationsHandler);
   app.post(
-    '/api/v1/users/me/connected-applications/:clientId/revoke',
+    '/api/v1/user/me/connected-applications/:clientId/revoke',
     revokeConnectedApplicationHandler,
   );
   app.post('/verification/request', requestVerificationHandler);
@@ -114,22 +120,25 @@ export const createServer = (): Express => {
   app.get('/verify-email', verificationLinkRedirectHandler);
   app.post('/password-reset/request', requestPasswordResetHandler);
   app.post('/password-reset/confirm', confirmPasswordResetHandler);
-  app.post('/admin/users', createAdminUserHandler);
-  app.get('/admin/users', listAdminUsersHandler);
-  app.get('/admin/users/:sub', getAdminUserHandler);
-  app.post('/admin/users/:sub/disable', disableAdminUserHandler);
-  app.post('/admin/users/:sub/enable', enableAdminUserHandler);
-  app.patch('/admin/users/:sub/profile', updateAdminUserProfileHandler);
-  app.post('/admin/users/:sub/email-verification/mark-verified', markAdminUserEmailVerifiedHandler);
-  app.get('/admin/audit-logs', listAdminAuditLogsHandler);
-  app.get('/admin/sessions', listAdminSessionsHandler);
-  app.post('/admin/maintenance/purge-unverified-users', purgeUnverifiedUsersHandler);
-  app.post('/admin/clients', createAdminClientHandler);
-  app.get('/admin/clients', listAdminClientsHandler);
-  app.get('/admin/clients/:clientId', getAdminClientHandler);
-  app.patch('/admin/clients/:clientId', updateAdminClientHandler);
-  app.post('/admin/clients/:clientId/disable', disableAdminClientHandler);
-  app.post('/admin/clients/:clientId/rotate-secret', rotateAdminClientSecretHandler);
+  app.post('/api/v1/admin/users', createAdminUserHandler);
+  app.get('/api/v1/admin/users', listAdminUsersHandler);
+  app.get('/api/v1/admin/users/:sub', getAdminUserHandler);
+  app.post('/api/v1/admin/users/:sub/disable', disableAdminUserHandler);
+  app.post('/api/v1/admin/users/:sub/enable', enableAdminUserHandler);
+  app.patch('/api/v1/admin/users/:sub/profile', updateAdminUserProfileHandler);
+  app.post(
+    '/api/v1/admin/users/:sub/email-verification/mark-verified',
+    markAdminUserEmailVerifiedHandler,
+  );
+  app.get('/api/v1/admin/audit-logs', listAdminAuditLogsHandler);
+  app.get('/api/v1/admin/sessions', listAdminSessionsHandler);
+  app.post('/api/v1/admin/maintenance/purge-unverified-users', purgeUnverifiedUsersHandler);
+  app.post('/api/v1/admin/clients', createAdminClientHandler);
+  app.get('/api/v1/admin/clients', listAdminClientsHandler);
+  app.get('/api/v1/admin/clients/:clientId', getAdminClientHandler);
+  app.patch('/api/v1/admin/clients/:clientId', updateAdminClientHandler);
+  app.post('/api/v1/admin/clients/:clientId/disable', disableAdminClientHandler);
+  app.post('/api/v1/admin/clients/:clientId/rotate-secret', rotateAdminClientSecretHandler);
 
   app.use(
     (

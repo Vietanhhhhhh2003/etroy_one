@@ -1,22 +1,30 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 const root = new URL('../', import.meta.url);
-const cases = JSON.parse(readFileSync(new URL('docs/api/explorer-cases.json', root), 'utf8'));
+const apiPath = (path) =>
+  path.replace(/^\/admin\//, '/api/v1/admin/').replace('/api/v1/users/me', '/api/v1/user/me');
+const cases = JSON.parse(readFileSync(new URL('docs/api/explorer-cases.json', root), 'utf8')).map(
+  (c) => ({ ...c, path: apiPath(c.path) }),
+);
 const server = readFileSync(new URL('src/app/server.ts', root), 'utf8');
 const routes = [...server.matchAll(/app\.(get|post|patch|delete)\(\s*'([^']+)'/g)].map(
   ([, method, path]) => ({ method, path: path.replace(/:(\w+)/g, '{$1}') }),
 );
 const supplemental = {
+  'post /api/v1/admin/login': { body: { email: 'admin@troy.edu', password: '{{userPassword}}' } },
+  'post /api/v1/user/login': { body: { email: '{{userEmail}}', password: '{{userPassword}}' } },
   'get /authorize/interaction': { query: { interaction_id: '{{interactionId}}' } },
   'post /authorize/decision': {
     body: { interaction_id: '{{interactionId}}', decision: 'approve' },
   },
-  'patch /api/v1/users/me/profile': {
+  'patch /api/v1/user/me/profile': {
     body: { name: 'eTroy User', avatar_url: 'https://example.com/avatar.png' },
   },
-  'post /api/v1/users/me/password': {
+  'post /api/v1/user/me/password': {
     body: { currentPassword: '{{userPassword}}', newPassword: '{{newPassword}}' },
   },
-  'post /admin/maintenance/purge-unverified-users': { body: { dryRun: true, olderThanDays: 30 } },
+  'post /api/v1/admin/maintenance/purge-unverified-users': {
+    body: { dryRun: true, olderThanDays: 30 },
+  },
 };
 const schema = (value) => {
   if (Array.isArray(value)) return { type: 'array', items: schema(value[0] ?? '') };
@@ -38,9 +46,9 @@ for (const { method, path } of routes) {
   const op = {
     tags: [
       matches[0]?.group ??
-        (path.startsWith('/admin')
+        (path.startsWith('/api/v1/admin')
           ? 'Admin'
-          : path.startsWith('/api/v1/users')
+          : path.startsWith('/api/v1/user')
             ? 'Account'
             : 'OIDC & Account'),
     ],
@@ -65,7 +73,10 @@ for (const { method, path } of routes) {
       description: 'Redirect to interaction UI or registered client.',
       headers: { Location: { schema: { type: 'string' } } },
     };
-  if (method === 'post' && ['/register', '/admin/users', '/admin/clients'].includes(path))
+  if (
+    method === 'post' &&
+    ['/register', '/api/v1/admin/users', '/api/v1/admin/clients'].includes(path)
+  )
     op.responses['201'] = { description: 'Created.' };
   if (path === '/ready') op.responses['503'] = { description: 'Dependencies unavailable.' };
   for (const [, name] of path.matchAll(/\{(\w+)\}/g))
@@ -86,10 +97,11 @@ for (const { method, path } of routes) {
       });
     }
   }
-  if (path.startsWith('/admin')) op.security = [{ adminContext: [] }];
+  if (path.startsWith('/api/v1/admin') && !path.endsWith('/login'))
+    op.security = [{ sessionCookie: [] }];
   if (path === '/userinfo') op.security = [{ bearerAuth: [] }];
   if (
-    path.startsWith('/api/v1/users') ||
+    (path.startsWith('/api/v1/user') && !path.endsWith('/login')) ||
     path.startsWith('/authorize/interaction') ||
     path.startsWith('/authorize/decision') ||
     path === '/logout'
@@ -119,19 +131,13 @@ const spec = {
     title: 'eTroy One API',
     version: '1.0.0',
     description:
-      'OIDC provider, identity lifecycle and administration. The 87 original API Explorer scenarios are preserved as named examples and x-explorer-cases. Replace {{placeholders}} before executing requests. Browser login establishes the same-origin session cookie; copy the etroy_oidc_csrf cookie value to x-oidc-csrf-token for logout. Admin context is inherited from upstream and is not a complete authorization mechanism. Do not expose this development configuration publicly.',
+      'OIDC provider, identity lifecycle and administration. The 87 original API Explorer scenarios are preserved as named examples and x-explorer-cases. Replace {{placeholders}} before executing requests. Browser login establishes the same-origin session cookie; copy the etroy_oidc_csrf cookie value to x-oidc-csrf-token for logout. Administrative API operations require a logged-in session with a persisted admin role. Client actor headers do not grant access. Do not expose this development configuration publicly.',
   },
   servers: [{ url: '/', description: 'Current eTroy One origin' }],
   paths,
   components: {
     securitySchemes: {
       bearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
-      adminContext: {
-        type: 'apiKey',
-        in: 'header',
-        name: 'x-admin-sub',
-        description: 'Upstream administrative actor context; not proof of authorization.',
-      },
       sessionCookie: {
         type: 'apiKey',
         in: 'cookie',

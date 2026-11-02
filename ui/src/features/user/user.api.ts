@@ -1,5 +1,4 @@
 import apiClient from '../../shared/api/apiClient';
-import { ADMIN_CONFIG } from '../../config/admin';
 import type { 
   UserProfile, 
   UpdateProfilePayload, 
@@ -83,30 +82,29 @@ const normalizeConnectedApplications = (value: unknown): ConnectedApplication[] 
 
 export const userApi = {
   getMe: async () => {
-    const response = await apiClient.get<{ data: UserProfile }>('/api/v1/users/me');
+    const response = await apiClient.get<{ data: UserProfile }>('/api/v1/user/me');
     const user = response.data.data;
     
-    // Foundation-only Admin Detection:
-    // Uses centralized configuration to determine administrative privileges.
-    user.isAdmin = ADMIN_CONFIG.checkAdminAccess(user.email);
+    // Roles are loaded from the authenticated server-side identity.
+    user.isAdmin = user.roles.includes('admin');
     
     return user;
   },
 
   updateProfile: (data: UpdateProfilePayload) => 
-    apiClient.patch<ApiResponse<UserProfile>>('/api/v1/users/me/profile', data),
+    apiClient.patch<ApiResponse<UserProfile>>('/api/v1/user/me/profile', data),
 
   changePassword: (data: ChangePasswordPayload) => 
-    apiClient.post<ApiResponse<UserProfile>>('/api/v1/users/me/password', data),
+    apiClient.post<ApiResponse<UserProfile>>('/api/v1/user/me/password', data),
 
   signOutFromAllSessions: () => 
-    apiClient.delete('/api/v1/users/me/sessions'),
+    apiClient.delete('/api/v1/user/me/sessions'),
 
   getConnectedApplications: async () => {
-    const response = await apiClient.get('/api/v1/users/me/connected-applications');
+    const response = await apiClient.get('/api/v1/user/me/connected-applications');
     return normalizeConnectedApplications(response.data);
   },
 
   revokeConnectedApplication: (clientId: string) =>
-    apiClient.post(`/api/v1/users/me/connected-applications/${encodeURIComponent(clientId)}/revoke`)
+    apiClient.post(`/api/v1/user/me/connected-applications/${encodeURIComponent(clientId)}/revoke`)
 };

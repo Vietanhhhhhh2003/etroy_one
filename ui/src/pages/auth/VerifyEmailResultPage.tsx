@@ -66,7 +66,7 @@ const VerifyEmailResultPage: React.FC = () => {
             </p>
             
             <button 
-              onClick={() => navigate('/login')}
+              onClick={() => navigate('/user/login')}
               style={{ 
                 width: '100%',
                 padding: '0.875rem',
