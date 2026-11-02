@@ -23,7 +23,7 @@ export default function SessionGuard({
   if (profile === undefined) return <p role="status">Checking access...</p>;
   if (!profile)
     return (
-      <Navigate to={admin ? '/admin/login' : '/user/login'} state={{ from: location }} replace />
+      <Navigate to={admin ? '/admin/login' : '/login'} state={{ from: location }} replace />
     );
   if (admin && !profile.isAdmin)
     return (

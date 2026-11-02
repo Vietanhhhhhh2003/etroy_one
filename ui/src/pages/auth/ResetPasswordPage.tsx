@@ -37,7 +37,7 @@ const ResetPasswordPage: React.FC = () => {
     try {
       await authApi.confirmPasswordReset({ token, newPassword });
       setSuccess(true);
-      setTimeout(() => navigate('/user/login'), 3000);
+      setTimeout(() => navigate('/login'), 3000);
     } catch (err) {
       const apiErr = mapError(err);
       setError(getSafeMessage(apiErr));

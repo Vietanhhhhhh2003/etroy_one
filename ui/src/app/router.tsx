@@ -26,8 +26,8 @@ import AdminObservabilityPage from '../pages/admin/AdminObservabilityPage';
 import AdminKeysPage from '../pages/admin/AdminKeysPage';
 
 export const router = createBrowserRouter([
-  { path: '/login', element: <Navigate to="/user/login" replace /> },
-  { path: '/user/login', element: <LoginPage audience="user" /> },
+  { path: '/login', element: <LoginPage audience="user" /> },
+  { path: '/user/login', element: <Navigate to="/login" replace /> },
   { path: '/admin/login', element: <LoginPage audience="admin" /> },
   { path: '/user', element: <Navigate to="/user/profile" replace /> },
   {

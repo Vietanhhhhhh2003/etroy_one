@@ -8,7 +8,7 @@ Integrated React identity UI, modular Express OIDC provider and Swagger UI. Prod
 docker compose up --build
 ```
 
-- UI: http://localhost:3000/user/login
+- UI: http://localhost:3000/login
 - Admin: http://localhost:3000/admin/login
 - Swagger: http://localhost:3000/docs/
 - OpenAPI: http://localhost:3000/openapi.json
@@ -53,7 +53,7 @@ The standalone API Explorer is replaced by Swagger UI at `/docs/`. All **87 orig
 
 Replace `{{placeholders}}` with your local values before using **Try it out**. Login with `POST /login` to establish the browser session. The browser shares cookies with the UI; Swagger cannot manually set an HttpOnly cookie. `/userinfo` accepts a bearer JWT. For logout, copy the `etroy_oidc_csrf` cookie value into `x-oidc-csrf-token`. Admin requests require a session established through `/admin/login` using an account with a persisted admin role. Client actor headers do not grant access. The testing sequence remains in [API_TESTING_GUIDELINE.md](docs/API_TESTING_GUIDELINE.md).
 
-Browser and API namespaces are separated: `/admin/*` pages use `/api/v1/admin/*`; `/user/profile` uses `/api/v1/user/me/*`. The old JSON admin endpoints are removed. `/login` redirects to `/user/login`; OIDC interaction paths stay unchanged. `/reset-password` directly serves React, preventing a redirect loop. Unknown API and asset paths return 404.
+Browser and API namespaces are separated: `/admin/*` pages use `/api/v1/admin/*`; `/user/profile` uses `/api/v1/user/me/*`. The old JSON admin endpoints are removed. `/login` is the user sign-in page; `/user/login` redirects to `/login`; OIDC interaction paths stay unchanged. `/reset-password` directly serves React, preventing a redirect loop. Unknown API and asset paths return 404.
 
 To grant admin access to an existing account without changing its password:
 

@@ -44,7 +44,7 @@ const ProfilePage: React.FC = () => {
       setAvatarUrl(data.avatar_url || '');
     } catch (err: unknown) {
       if (isUnauthorizedError(err)) {
-        navigate('/user/login');
+        navigate('/login');
         return;
       }
       setError('We could not load your profile right now. Please try again later.');
@@ -85,7 +85,7 @@ const ProfilePage: React.FC = () => {
     try {
       await userApi.signOutFromAllSessions();
       await authApi.logout();
-      navigate('/user/login');
+      navigate('/login');
     } catch {
       setError('Logout failed. Please try again.');
     }
@@ -99,7 +99,7 @@ const ProfilePage: React.FC = () => {
       setConnectedApplications(apps);
     } catch (err: unknown) {
       if (isUnauthorizedError(err)) {
-        navigate('/user/login');
+        navigate('/login');
         return;
       }
 
@@ -120,7 +120,7 @@ const ProfilePage: React.FC = () => {
       setSuccessMessage('Application access revoked.');
     } catch (err: unknown) {
       if (isUnauthorizedError(err)) {
-        navigate('/user/login');
+        navigate('/login');
         return;
       }
 

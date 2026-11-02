@@ -151,7 +151,7 @@ const LoginPage: React.FC<{ audience?: 'user' | 'admin' }> = ({ audience = 'user
         }}
       >
         {audience === 'admin' ? (
-          <Link to="/user/login">Sign in to your user account</Link>
+          <Link to="/login">Sign in to your user account</Link>
         ) : (
           <>
             New to eTroy One?{' '}

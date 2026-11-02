@@ -48,7 +48,7 @@ const ResendVerificationPage: React.FC = () => {
             type="success"
             message="If the account exists and is eligible, a verification link will be sent to your email address."
           />
-          <Link to="/user/login" style={{
+          <Link to="/login" style={{
             display: 'inline-block',
             marginTop: 'var(--spacing-lg)',
             color: 'var(--color-primary)',
@@ -77,7 +77,7 @@ const ResendVerificationPage: React.FC = () => {
           </Button>
 
           <div style={{ marginTop: 'var(--spacing-lg)', textAlign: 'center' }}>
-            <Link to="/user/login" style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+            <Link to="/login" style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
               Remembered your password? Back to sign in
             </Link>
           </div>

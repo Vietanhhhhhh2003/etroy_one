@@ -4,12 +4,12 @@ This contract supersedes earlier header-based administrative context and fronten
 
 | Purpose | Browser route | API namespace |
 |---|---|---|
-| User sign-in | `/user/login` | `POST /api/v1/user/login` |
+| User sign-in | `/login` | `POST /api/v1/user/login` |
 | Account | `/user/profile` | `/api/v1/user/me/*` |
 | Admin sign-in | `/admin/login` | `POST /api/v1/admin/login` |
 | Administration | `/admin/*` | `/api/v1/admin/*` |
 
-`/` resolves to the authenticated role's home. `/login` redirects to `/user/login`. OIDC interaction pages `/oidc/login` and `/oidc/consent` and protocol endpoints retain their existing URLs.
+`/` resolves to the authenticated role's home. `/login` serves user sign-in; `/user/login` redirects to `/login`. OIDC interaction pages `/oidc/login` and `/oidc/consent` and protocol endpoints retain their existing URLs.
 
 - Roles are persisted as `user` and `admin` on the user record. Existing records without a role remain ordinary users.
 - Registration and profile/admin user create/update payloads cannot assign roles. Email addresses do not confer privileges.
