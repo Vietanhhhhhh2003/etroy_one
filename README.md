@@ -8,7 +8,8 @@ Integrated React identity UI, modular Express OIDC provider and Swagger UI. Prod
 docker compose up --build
 ```
 
-- UI: http://localhost:3000
+- UI: http://localhost:3000/login
+- Admin: http://localhost:3000/admin/login
 - Swagger: http://localhost:3000/docs/
 - OpenAPI: http://localhost:3000/openapi.json
 - Mailpit inbox: http://localhost:8025
@@ -48,17 +49,25 @@ compose.yaml         Application, MongoDB, Redis, local SMTP
 
 ## Swagger migration
 
-The standalone API Explorer is replaced by Swagger UI at `/docs/`. All **87 original scenarios** are retained in `docs/api/explorer-cases.json` and mapped to **41 backend operations**. Repeated requests are named examples under the same OpenAPI operation. Negative scenarios remain available; they are expectations, not claims that a test has passed. The generator supplements endpoints absent from the Explorer with account, interaction and maintenance examples.
+The standalone API Explorer is replaced by Swagger UI at `/docs/`. All **87 original scenarios** are retained in `docs/api/explorer-cases.json` and mapped to **43 backend operations**. Repeated requests are named examples under the same OpenAPI operation. Negative scenarios remain available; they are expectations, not claims that a test has passed. The generator supplements endpoints absent from the Explorer with account, interaction and maintenance examples.
 
-Replace `{{placeholders}}` with your local values before using **Try it out**. Login with `POST /login` to establish the browser session. The browser shares cookies with the UI; Swagger cannot manually set an HttpOnly cookie. `/userinfo` accepts a bearer JWT. For logout, copy the `etroy_oidc_csrf` cookie value into `x-oidc-csrf-token`. Admin requests expose the upstream `x-admin-sub` context via the Authorize dialog. The testing sequence remains in [API_TESTING_GUIDELINE.md](docs/API_TESTING_GUIDELINE.md).
+Replace `{{placeholders}}` with your local values before using **Try it out**. Login with `POST /login` to establish the browser session. The browser shares cookies with the UI; Swagger cannot manually set an HttpOnly cookie. `/userinfo` accepts a bearer JWT. For logout, copy the `etroy_oidc_csrf` cookie value into `x-oidc-csrf-token`. Admin requests require a session established through `/admin/login` using an account with a persisted admin role. Client actor headers do not grant access. The testing sequence remains in [API_TESTING_GUIDELINE.md](docs/API_TESTING_GUIDELINE.md).
 
-UI navigation uses `Accept: text/html`; JSON API calls use `Accept: application/json`. This preserves overlapping `/admin/users`, `/admin/clients` and `/admin/sessions` routes. `/reset-password` now directly serves the React page, preventing a redirect loop after unifying origins. Unknown API and asset paths return 404.
+Browser and API namespaces are separated: `/admin/*` pages use `/api/v1/admin/*`; `/user/profile` uses `/api/v1/user/me/*`. The old JSON admin endpoints are removed. `/login` is the user sign-in page; `/user/login` redirects to `/login`; OIDC interaction paths stay unchanged. `/reset-password` directly serves React, preventing a redirect loop. Unknown API and asset paths return 404.
+
+To grant admin access to an existing account without changing its password:
+
+```sh
+docker compose exec -T app node dist/scripts/grant-admin.js admin@troy.edu
+```
+
+See [the RBAC routing contract](docs/architecture/rbac-routing.md) for access rules and migration details.
 
 ## Configuration and deployment limits
 
 The root `.env` is the backend configuration source. Frontend defaults use relative same-origin URLs; optional overrides are documented in `ui/.env.example`. `PUBLIC_UI_BASE_URL` explicitly controls email/interaction UI links and defaults to `APP_BASE_URL`, independently of ecosystem client callback URLs.
 
-The imported backend retains its existing authorization and credential implementation: administrative actor headers and frontend email allowlists are development foundations, and password hashing uses SHA-256. These require a separate hardening pass before public production use. This integration does not claim production security readiness. For deployment, configure a public HTTPS issuer/UI origin, `NODE_ENV=production`, secure infrastructure, real SMTP credentials, access controls and a strong password KDF. Do not use the upstream demonstration account script in production.
+Administrative access now uses server-side sessions and persisted roles. The imported password hashing implementation still uses SHA-256 and requires a separate hardening pass before public production use. This integration does not claim production security readiness. For deployment, configure a public HTTPS issuer/UI origin, `NODE_ENV=production`, secure infrastructure, real SMTP credentials, access controls and a strong password KDF. Grant roles only to accounts you control.
 
 No values from other local projects' `.env` files are imported. Generated builds, local environment files and private keys are excluded from Git.
 

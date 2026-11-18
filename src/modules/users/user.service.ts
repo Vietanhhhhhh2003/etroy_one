@@ -8,13 +8,14 @@ import {
   type UpdateUserRecordInput,
   type UserEntity,
 } from './user.repository.js';
-import type { UserStatus } from './user.model.js';
+import type { UserStatus, UserRole } from './user.model.js';
 
 export interface UserProfile {
   sub: string;
   email: string;
   email_verified: boolean;
   status: UserStatus;
+  roles: UserRole[];
   name?: string;
   avatar_url?: string;
 }
@@ -45,6 +46,7 @@ export interface UserAdminView {
   email: string;
   email_verified: boolean;
   status: UserStatus;
+  roles: UserRole[];
   name?: string;
   avatar_url?: string;
   createdAt: string;
@@ -192,6 +194,7 @@ const toUserProfile = (user: UserEntity): UserProfile => {
     email: user.email,
     email_verified: user.email_verified,
     status: user.status,
+    roles: [...user.roles],
   };
 
   if (user.name !== undefined) {
@@ -212,6 +215,7 @@ const toUserAdminView = (user: UserEntity): UserAdminView => {
     email: user.email,
     email_verified: user.email_verified,
     status: user.status,
+    roles: [...user.roles],
     createdAt: user.createdAt.toISOString(),
     updatedAt: user.updatedAt.toISOString(),
   };
@@ -319,6 +323,18 @@ export class UserService {
     } catch (error: unknown) {
       throw mapRepositoryError(error);
     }
+  }
+
+  // Explicit operator action only. Registration and profile mutation cannot set roles.
+  async grantAdminAccess(email: string): Promise<UserProfile> {
+    const user = await this.userRepository.findByEmail(normalizeEmail(email));
+    if (!user) throw userNotFound();
+    const updated = await this.userRepository.updateUser(
+      { sub: user.sub },
+      { roles: ['user', 'admin'] },
+    );
+    if (!updated) throw userNotFound();
+    return toUserProfile(updated);
   }
 
   async getUserBySub(sub: string): Promise<UserProfile> {

@@ -18,12 +18,13 @@ import type {
  * 
  * Centralizes all administrative control endpoints.
  * Note: These endpoints require administrative authorization.
- * Current implementation uses 'x-admin-sub' header for context.
+ * The server authorizes persisted roles from the session cookie.
  */
 
-const getAdminHeaders = (adminSub?: string) => ({
-  'x-admin-sub': adminSub || 'system-admin', // Default placeholder for dev/foundation
-});
+const getAdminHeaders = (adminSub?: string) => {
+  void adminSub; // Actor identity comes from the server-side session.
+  return {};
+};
 
 export const adminApi = {
   // --- Platform / Observability ---
@@ -45,49 +46,49 @@ export const adminApi = {
 
   // --- User Management ---
   listUsers: async (adminSub?: string) => {
-    const response = await apiClient.get<{ data: AdminUserView[] }>('/admin/users', {
+    const response = await apiClient.get<{ data: AdminUserView[] }>('/api/v1/admin/users', {
       headers: getAdminHeaders(adminSub),
     });
     return response.data.data;
   },
 
   getUser: async (sub: string, adminSub?: string) => {
-    const response = await apiClient.get<{ data: AdminUserView }>(`/admin/users/${sub}`, {
+    const response = await apiClient.get<{ data: AdminUserView }>(`/api/v1/admin/users/${sub}`, {
       headers: getAdminHeaders(adminSub),
     });
     return response.data.data;
   },
 
   createUser: async (input: AdminCreateUserInput, adminSub?: string) => {
-    const response = await apiClient.post<{ data: AdminUserView }>('/admin/users', input, {
+    const response = await apiClient.post<{ data: AdminUserView }>('/api/v1/admin/users', input, {
       headers: getAdminHeaders(adminSub),
     });
     return response.data.data;
   },
 
   updateUserProfile: async (sub: string, input: AdminUpdateProfileInput, adminSub?: string) => {
-    const response = await apiClient.patch<{ data: AdminUserView }>(`/admin/users/${sub}/profile`, input, {
+    const response = await apiClient.patch<{ data: AdminUserView }>(`/api/v1/admin/users/${sub}/profile`, input, {
       headers: getAdminHeaders(adminSub),
     });
     return response.data.data;
   },
 
   disableUser: async (sub: string, adminSub?: string) => {
-    const response = await apiClient.post<{ data: AdminUserView }>(`/admin/users/${sub}/disable`, {}, {
+    const response = await apiClient.post<{ data: AdminUserView }>(`/api/v1/admin/users/${sub}/disable`, {}, {
       headers: getAdminHeaders(adminSub),
     });
     return response.data.data;
   },
 
   enableUser: async (sub: string, adminSub?: string) => {
-    const response = await apiClient.post<{ data: AdminUserView }>(`/admin/users/${sub}/enable`, {}, {
+    const response = await apiClient.post<{ data: AdminUserView }>(`/api/v1/admin/users/${sub}/enable`, {}, {
       headers: getAdminHeaders(adminSub),
     });
     return response.data.data;
   },
 
   markEmailVerified: async (sub: string, adminSub?: string) => {
-    const response = await apiClient.post<{ data: AdminUserView }>(`/admin/users/${sub}/email-verification/mark-verified`, {}, {
+    const response = await apiClient.post<{ data: AdminUserView }>(`/api/v1/admin/users/${sub}/email-verification/mark-verified`, {}, {
       headers: getAdminHeaders(adminSub),
     });
     return response.data.data;
@@ -95,14 +96,14 @@ export const adminApi = {
 
   // --- Client Management ---
   listClients: async (adminSub?: string) => {
-    const response = await apiClient.get<{ data: AdminClientView[] }>('/admin/clients', {
+    const response = await apiClient.get<{ data: AdminClientView[] }>('/api/v1/admin/clients', {
       headers: getAdminHeaders(adminSub),
     });
     return response.data.data;
   },
 
   getClient: async (clientId: string, adminSub?: string) => {
-    const response = await apiClient.get<{ data: AdminClientView }>(`/admin/clients/${clientId}`, {
+    const response = await apiClient.get<{ data: AdminClientView }>(`/api/v1/admin/clients/${clientId}`, {
       headers: getAdminHeaders(adminSub),
     });
     return response.data.data;
@@ -115,35 +116,35 @@ export const adminApi = {
       grantTypes: input.grantTypes || ['authorization_code', 'refresh_token'],
       responseTypes: input.responseTypes || ['code'],
     };
-    const response = await apiClient.post<{ data: AdminClientWithSecret }>('/admin/clients', payload, {
+    const response = await apiClient.post<{ data: AdminClientWithSecret }>('/api/v1/admin/clients', payload, {
       headers: getAdminHeaders(adminSub),
     });
     return response.data.data;
   },
 
   updateClient: async (clientId: string, input: AdminUpdateClientInput, adminSub?: string) => {
-    const response = await apiClient.patch<{ data: AdminClientView }>(`/admin/clients/${clientId}`, input, {
+    const response = await apiClient.patch<{ data: AdminClientView }>(`/api/v1/admin/clients/${clientId}`, input, {
       headers: getAdminHeaders(adminSub),
     });
     return response.data.data;
   },
 
   disableClient: async (clientId: string, adminSub?: string) => {
-    const response = await apiClient.post<{ data: AdminClientView }>(`/admin/clients/${clientId}/disable`, {}, {
+    const response = await apiClient.post<{ data: AdminClientView }>(`/api/v1/admin/clients/${clientId}/disable`, {}, {
       headers: getAdminHeaders(adminSub),
     });
     return response.data.data;
   },
 
   enableClient: async (clientId: string, adminSub?: string) => {
-    const response = await apiClient.patch<{ data: AdminClientView }>(`/admin/clients/${clientId}`, { status: 'active' }, {
+    const response = await apiClient.patch<{ data: AdminClientView }>(`/api/v1/admin/clients/${clientId}`, { status: 'active' }, {
       headers: getAdminHeaders(adminSub),
     });
     return response.data.data;
   },
 
   rotateClientSecret: async (clientId: string, adminSub?: string) => {
-    const response = await apiClient.post<{ data: AdminClientWithSecret }>(`/admin/clients/${clientId}/rotate-secret`, {}, {
+    const response = await apiClient.post<{ data: AdminClientWithSecret }>(`/api/v1/admin/clients/${clientId}/rotate-secret`, {}, {
       headers: getAdminHeaders(adminSub),
     });
     return response.data.data;
@@ -157,7 +158,7 @@ export const adminApi = {
 
   // --- Audit Logs ---
   listAuditLogs: async (adminSub?: string) => {
-    const response = await apiClient.get<{ data: AdminAuditLog[] }>('/admin/audit-logs', {
+    const response = await apiClient.get<{ data: AdminAuditLog[] }>('/api/v1/admin/audit-logs', {
       headers: getAdminHeaders(adminSub),
     });
     return response.data.data;
@@ -165,7 +166,7 @@ export const adminApi = {
 
   // --- Sessions / Token Controls ---
   listSessions: async (adminSub?: string) => {
-    const response = await apiClient.get<{ data: AdminSessionView[] }>('/admin/sessions', {
+    const response = await apiClient.get<{ data: AdminSessionView[] }>('/api/v1/admin/sessions', {
       headers: getAdminHeaders(adminSub),
     });
     return response.data.data;
@@ -173,7 +174,7 @@ export const adminApi = {
 
   // --- Maintenance ---
   purgeUnverifiedUsers: async (adminSub?: string) => {
-    const response = await apiClient.post<{ data: { deletedCount: number } }>('/admin/maintenance/purge-unverified-users', {}, {
+    const response = await apiClient.post<{ data: { deletedCount: number } }>('/api/v1/admin/maintenance/purge-unverified-users', {}, {
       headers: getAdminHeaders(adminSub),
     });
     return response.data.data;

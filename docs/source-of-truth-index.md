@@ -1,3 +1,5 @@
+For administrative access and route separation, [RBAC routing](architecture/rbac-routing.md) overrides the earlier actor-header and frontend allowlist design.
+
 # eTroy One integration authority
 
 For consolidation-specific changes, see [etroy-one-integration.md](architecture/etroy-one-integration.md). The following upstream domain documentation remains applicable.

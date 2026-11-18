@@ -60,9 +60,12 @@ const optionalHeader = (value: string | undefined): string | undefined => {
   return normalized === undefined || normalized.length === 0 ? undefined : normalized;
 };
 
-const buildAdminContext = (request: AdminRequestContextSource): AdminOperationContext => {
+const buildAdminContext = (
+  request: AdminRequestContextSource,
+  response: Pick<Response, 'locals'>,
+): AdminOperationContext => {
   const actor = validateAdminActor({
-    adminSub: request.header('x-admin-sub'),
+    adminSub: response.locals.principal?.sub,
   });
 
   const correlationId = optionalHeader(request.header('x-correlation-id'));
@@ -93,7 +96,7 @@ export const createAdminUserHandler = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const context = buildAdminContext(request);
+    const context = buildAdminContext(request, response);
     const input = validateAdminCreateUserInput(request.body);
     const user = await adminService.createUser(input, context);
     sendAdminUser(response, 201, user);
@@ -123,7 +126,7 @@ export const listAdminUsersHandler = async (
 ): Promise<void> => {
   try {
     validateAdminActor({
-      adminSub: request.header('x-admin-sub'),
+      adminSub: response.locals.principal?.sub,
     });
     const query = validateAdminListQueryInput(request.query);
     const users = await adminService.listUsers(query);
@@ -139,7 +142,7 @@ export const disableAdminUserHandler = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const context = buildAdminContext(request);
+    const context = buildAdminContext(request, response);
     const params = validateAdminUserParams(request.params);
     const user = await adminService.disableUser(params.sub, context);
     sendAdminUser(response, 200, user);
@@ -154,7 +157,7 @@ export const enableAdminUserHandler = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const context = buildAdminContext(request);
+    const context = buildAdminContext(request, response);
     const params = validateAdminUserParams(request.params);
     const user = await adminService.enableUser(params.sub, context);
     sendAdminUser(response, 200, user);
@@ -169,7 +172,7 @@ export const updateAdminUserProfileHandler = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const context = buildAdminContext(request);
+    const context = buildAdminContext(request, response);
     const params = validateAdminUserParams(request.params);
     const input = validateAdminUpdateProfileInput(request.body);
     const user = await adminService.updateProfile(params.sub, input, context);
@@ -185,7 +188,7 @@ export const markAdminUserEmailVerifiedHandler = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const context = buildAdminContext(request);
+    const context = buildAdminContext(request, response);
     const params = validateAdminUserParams(request.params);
     const user = await adminService.markEmailVerified(params.sub, context);
     sendAdminUser(response, 200, user);
@@ -208,7 +211,7 @@ export const createAdminClientHandler = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const context = buildAdminContext(request);
+    const context = buildAdminContext(request, response);
     const input = validateAdminCreateClientInput(request.body);
     const client = await adminService.createClient(input, context);
     sendAdminClient(response, 201, client);
@@ -256,7 +259,7 @@ export const updateAdminClientHandler = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const context = buildAdminContext(request);
+    const context = buildAdminContext(request, response);
     const params = validateAdminClientParams(request.params);
     const input = validateAdminUpdateClientInput(request.body);
     const client = await adminService.updateClient(params.clientId, input, context);
@@ -276,7 +279,7 @@ export const disableAdminClientHandler = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const context = buildAdminContext(request);
+    const context = buildAdminContext(request, response);
     const params = validateAdminClientParams(request.params);
     const client = await adminService.disableClient(params.clientId, context);
     if (!client) {
@@ -295,7 +298,7 @@ export const rotateAdminClientSecretHandler = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const context = buildAdminContext(request);
+    const context = buildAdminContext(request, response);
     const params = validateAdminClientParams(request.params);
     const result = await adminService.rotateClientSecret(params.clientId, context);
     if (!result) {
@@ -315,7 +318,7 @@ export const listAdminAuditLogsHandler = async (
 ): Promise<void> => {
   try {
     validateAdminActor({
-      adminSub: request.header('x-admin-sub'),
+      adminSub: response.locals.principal?.sub,
     });
     const query = validateAdminListQueryInput(request.query);
     const events = await adminService.listAuditLogs(query);
@@ -332,7 +335,7 @@ export const listAdminSessionsHandler = async (
 ): Promise<void> => {
   try {
     validateAdminActor({
-      adminSub: request.header('x-admin-sub'),
+      adminSub: response.locals.principal?.sub,
     });
     const query = validateAdminListQueryInput(request.query);
     const sessions = await adminService.listSessions(query);
@@ -348,7 +351,7 @@ export const purgeUnverifiedUsersHandler = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const context = buildAdminContext(request);
+    const context = buildAdminContext(request, response);
     const input = validateAdminPurgeUnverifiedUsersInput(request.body ?? {});
     const result = await adminService.purgeUnverifiedUsers(input, context);
     response.status(200).json({ data: result });

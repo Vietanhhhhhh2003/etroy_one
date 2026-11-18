@@ -12,6 +12,7 @@ export interface AuthenticatedIdentity {
   sub: string;
   email: string;
   email_verified: boolean;
+  roles: UserCredentialIdentity['roles'];
   name?: string;
   avatar_url?: string;
 }
@@ -29,6 +30,7 @@ const toAuthenticatedIdentity = (user: UserCredentialIdentity): AuthenticatedIde
     sub: user.sub,
     email: user.email,
     email_verified: user.email_verified,
+    roles: [...user.roles],
   };
 
   if (user.name !== undefined) {
@@ -49,7 +51,11 @@ export class AuthService {
     const input = validateLoginInput({ email, password });
     const user = await this.users.getCredentialIdentityByEmail(input.email);
 
-    if (user === null || !verifyHash(input.password, user.passwordHash)) {
+    if (
+      user === null ||
+      user.status !== 'active' ||
+      !verifyHash(input.password, user.passwordHash)
+    ) {
       throw invalidCredentials();
     }
 

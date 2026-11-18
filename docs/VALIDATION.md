@@ -1,3 +1,15 @@
+# RBAC route separation validation
+
+- `npm run check`: PASS (frontend/backend lint, typecheck, complete builds and 4 integration test cases).
+- Authorization integration: anonymous 401, ordinary user 403 across administrative modules, spoofed actor headers ignored, session-derived audit actor, persisted-role revocation and disabled-user denial.
+- Docker rebuild/start: PASS; all services healthy.
+- Existing local `admin@troy.edu` explicitly granted `user` + `admin` roles through the operator CLI; credentials unchanged.
+- Live HTTP: admin/user pages 200, administrative login 200, role-bearing profile 200, administrative user listing 200, anonymous actor-header request 401, legacy admin and account JSON paths 404.
+- OpenAPI: 43 operations, all 87 original Explorer scenarios mapped.
+- CI stack smoke additionally exercises regular-user denial at admin login/API, role injection rejection, explicit operator promotion and successful admin access against real MongoDB.
+
+## Initial consolidation validation (historical)
+
 # Validation
 
 Local checks passed:

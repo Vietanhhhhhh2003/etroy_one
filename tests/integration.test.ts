@@ -33,6 +33,9 @@ for (const modulePath of ['../src/app/server.js', '../dist/src/app/server.js']) 
       for (const path of [
         '/',
         '/login',
+        '/admin/login',
+        '/user/login',
+        '/user/profile',
         '/register',
         '/oidc/login',
         '/oidc/consent',
@@ -57,8 +60,10 @@ for (const modulePath of ['../src/app/server.js', '../dist/src/app/server.js']) 
       ]) {
         assert.equal((await fetch(base + path)).status, 200, path);
       }
-      const admin = await fetch(base + '/admin/users', { headers: { Accept: 'application/json' } });
-      assert.equal(admin.status, 400);
+      const admin = await fetch(base + '/api/v1/admin/users', {
+        headers: { Accept: 'application/json', 'x-admin-sub': 'system-admin' },
+      });
+      assert.equal(admin.status, 401);
       assert.match(admin.headers.get('content-type') ?? '', /json/);
       const login = await fetch(base + '/login', {
         method: 'POST',
@@ -67,7 +72,7 @@ for (const modulePath of ['../src/app/server.js', '../dist/src/app/server.js']) 
       });
       assert.equal(login.status, 400);
       assert.match(login.headers.get('content-type') ?? '', /json/);
-      const profile = await fetch(base + '/api/v1/users/me');
+      const profile = await fetch(base + '/api/v1/user/me');
       assert.equal(profile.status, 401);
       assert.equal((await fetch(base + '/api/unknown')).status, 404);
       assert.equal((await fetch(base + '/assets/missing.js')).status, 404);

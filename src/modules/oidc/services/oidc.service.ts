@@ -1228,12 +1228,18 @@ export class OidcService {
     };
   }
 
-  async loginInternal(input: unknown): Promise<InternalLoginResult> {
+  async loginInternal(input: unknown, requireAdmin = false): Promise<InternalLoginResult> {
     const inputRecord = toQueryRecord(input);
     assertKnownFields(inputRecord, ['email', 'password']);
     const email = readSingleString(inputRecord, 'email');
     const password = readSingleString(inputRecord, 'password');
     const identity = await this.authBridge.validateCredentials(email, password);
+    if (requireAdmin && !identity.roles.includes('admin')) {
+      throw new BaseError('Administrative access is required.', {
+        code: 'FORBIDDEN',
+        statusCode: 403,
+      });
+    }
     const createdSession = await this.oidcSessionService.createSession({
       subject: identity.sub,
       clientId: INTERNAL_LOGIN_CLIENT_ID,

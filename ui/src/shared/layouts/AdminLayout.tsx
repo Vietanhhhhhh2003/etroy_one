@@ -101,7 +101,7 @@ const AdminLayout: React.FC = () => {
           marginTop: 'auto'
         }}>
           <button 
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/user/profile')}
             style={{ 
               width: '100%', 
               display: 'flex', 

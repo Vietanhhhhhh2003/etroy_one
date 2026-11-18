@@ -169,13 +169,16 @@ export const revokeConnectedApplicationHandler = async (
   }
 };
 
-export const internalLoginHandler = async (
+const createLoginHandler = (requireAdmin: boolean) => async (
   request: Request<Record<string, never>, InternalLoginResponseBody, InternalLoginRequestBody>,
   response: Response<InternalLoginResponseBody>,
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const result = await oidcService.loginInternal(request.body ?? {});
+    const result = await oidcService.loginInternal(
+      request.body ?? {},
+      requireAdmin,
+    );
     setCookie(response, result.sessionCookie);
     setCookie(response, result.csrfCookie);
     response.status(200).json({ data: result.identity });
@@ -183,6 +186,9 @@ export const internalLoginHandler = async (
     next(error);
   }
 };
+
+export const internalLoginHandler = createLoginHandler(false);
+export const adminLoginHandler = createLoginHandler(true);
 
 export const tokenHandler = async (
   request: Request<Record<string, never>, TokenExchangeResponse, TokenRequestBody>,
